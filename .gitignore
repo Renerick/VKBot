@@ -303,3 +303,7 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+
+# Configuration file
+login.json
+config.json

@@ -1,0 +1,12 @@
+﻿{
+  // users' level of privileges
+  // bigger number means less rights
+  // 0 - admin
+  // negative number - ignored user (no rights)
+  // up to 127 levels
+  
+  "usersLevels":{"13245": 1, "54321": 0, "11111": -1}
+  
+  // this level will be assigned to all users by default
+  "defaultLevel": 1
+}

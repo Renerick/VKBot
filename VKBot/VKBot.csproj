@@ -6,7 +6,4 @@
   <ItemGroup>
     <PackageReference Include="VkNet" Version="1.29.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Typings" />
-  </ItemGroup>
 </Project>
