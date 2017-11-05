@@ -2,7 +2,7 @@
 
 {
   // Application id
-  "applicationId": 12345,
+  "applicationId": "12345",
   
   // Necessary data for authentification
   "login": "login",
@@ -19,4 +19,7 @@
   // "port": "port",
   // "proxyLogin": "proxyLogin",
   // "proxyPassword": "proxyPassword"
+  
+  // Api version
+  // "apiVersion": "5.65"
 }
