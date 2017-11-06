@@ -8,8 +8,7 @@ before_script:
 build:
   only:
     - master
-  stage:
-    - build
+  stage: build
   script:
     - cd VKBot
     - dotnet build
