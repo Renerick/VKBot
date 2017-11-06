@@ -2,7 +2,7 @@
 stages:
   - build
 
-before-script:
+before_script:
   - dotnet restore
 
 build:
