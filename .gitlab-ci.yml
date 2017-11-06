@@ -1,0 +1,16 @@
+
+stages:
+  - build
+
+before-script:
+  - dotnet restore
+
+build:
+  only:
+    - master
+  stage:
+    - build
+  script:
+    - cd VKBot
+    - dotnet build
+

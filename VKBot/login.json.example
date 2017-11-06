@@ -1,0 +1,25 @@
+﻿// Fill this file with your account data
+
+{
+  // Application id
+  "applicationId": "12345",
+  
+  // Necessary data for authentification
+  "login": "login",
+  "password": "password",
+  
+  // Authentification via external token settings
+  "accessToken": "token",
+  // If you use access token you should set user id explicitly
+  // Otherwise you will not be enable to get your account user id
+  "userId": 54321
+  
+  // Proxy server settings
+  // "host": "host",
+  // "port": "port",
+  // "proxyLogin": "proxyLogin",
+  // "proxyPassword": "proxyPassword"
+  
+  // Api version
+  // "apiVersion": "5.65"
+}
