@@ -11,5 +11,7 @@ build:
   stage: build
   script:
     - cd VKBot
-    - dotnet build
+    - echo $CI_BOT_LOGIN > login.json
+    - echo {} > config.json
+    - dotnet run
 
