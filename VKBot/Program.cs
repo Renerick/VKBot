@@ -49,7 +49,6 @@ namespace VKBot
                 }
                 else
                 {
-                    // TODO: fix
                     throw new NotImplementedException("There is no auth through login and password now");
                 }
             }
