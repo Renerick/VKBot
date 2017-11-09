@@ -26,9 +26,9 @@ release:
   dependencies:
     - build
   script:
-    - sudo docker login -u Renerick -p $GITLAB_ACCESS_TOKEN registry.gitlab.com
-    - sudo docker build -t registry.gitlab.com/renerick/vkbot .
-    - sudo docker push registry.gitlab.com/renerick/vkbot
+    - docker login -u Renerick -p $GITLAB_ACCESS_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/renerick/vkbot .
+    - docker push registry.gitlab.com/renerick/vkbot
 
 
 
