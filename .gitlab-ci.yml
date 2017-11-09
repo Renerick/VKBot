@@ -32,6 +32,8 @@ release:
     - build
   script:
     - cd VKBot/bin/Release/netcoreapp2.0
+    - echo $CI_BOT_LOGIN > login.json
+    - echo {} > config.json
     - docker login -u Renerick -p $GITLAB_ACCESS_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/renerick/vkbot .
     - docker push registry.gitlab.com/renerick/vkbot
