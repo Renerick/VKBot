@@ -16,7 +16,7 @@ build:
     - cp ../Dockerfile ./bin/Release/netcoreapp2.0
   artifacts:
     paths:
-      - ./bin/Release/netcoreapp2.0
+      - ./bin/Release/netcoreapp2.0/
     expire_in: 2 days
 
 release:
