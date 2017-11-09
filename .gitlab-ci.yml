@@ -13,7 +13,7 @@ build:
   script:
     - cd VKBot
     - dotnet publish -c Release -o ./bin/Release
-    - cp ./Dockerfile ./bin/Release/netcoreapp2.0
+    - cp ../Dockerfile ./bin/Release/netcoreapp2.0
   artifacts:
     paths:
       - ./bin/Release/netcoreapp2.0
