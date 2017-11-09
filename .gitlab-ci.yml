@@ -1,17 +1,35 @@
-image: microsoft/dotnet:latest
 stages:
   - build
+  - release
 
 before_script:
   - dotnet restore
 
 build:
+  image: microsoft/dotnet:latest
+  stage: build
   only:
     - master
-  stage: build
   script:
     - cd VKBot
-    - echo $CI_BOT_LOGIN > login.json
-    - echo {} > config.json
-    - dotnet run
+    - dotnet publish -c Release -o ./bin/Release
+    - mv Dockerfile ./bin/Release/publish
+  artifacts:
+    paths:
+      - ./bin/Release/publish
+    expire_in: 2 days
+
+release:
+  image: docker:latest
+  stage: release
+  only:
+    - master
+  dependencies:
+    - build
+  script:
+    - sudo docker login -u Renerick -p $GITLAB_ACCESS_TOKEN registry.gitlab.com
+    - sudo docker build -t registry.gitlab.com/renerick/vkbot .
+    - sudo docker push registry.gitlab.com/renerick/vkbot
+
+
 
