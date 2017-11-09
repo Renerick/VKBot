@@ -2,8 +2,6 @@ stages:
   - build
   - release
 
-before_script:
-  - dotnet restore
 
 build:
   image: microsoft/dotnet:latest
@@ -11,12 +9,13 @@ build:
   only:
     - master
   script:
+    - dotnet restore
     - cd VKBot
     - dotnet publish -c Release -o ./bin/Release
     - cp ../Dockerfile ./bin/Release/netcoreapp2.0
   artifacts:
     paths:
-      - ./bin/Release/netcoreapp2.0/
+      - ./bin/Release/
     expire_in: 2 days
 
 release:
