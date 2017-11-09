@@ -13,7 +13,7 @@ namespace VKBot
             {
                 var loginData = SettingsLoader.LoadApiAuthParams();
                 var settings = SettingsLoader.LoadConfiguration();
-                bot = new VkBot(loginData, settings);
+                bot = new VkBot(loginData, settings, Console.WriteLine);
             }
             catch (JsonException e)
             {
@@ -30,10 +30,6 @@ namespace VKBot
                 Console.WriteLine($"Unhandled exception, {e}");
                 return;
             }
-
-            // Message about successful login
-            // TODO: this is temporary solution, need to remove it and implement nice logging
-            Console.WriteLine("Successfuly logged in");
             
             bot.StartBot();
         }

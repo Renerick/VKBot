@@ -46,11 +46,11 @@ namespace VKBot
             var longPollClient = _api.StartLongPollClient(longPollParams.Server, longPollParams.Key, longPollParams.Ts)
                 .Result;
 
-            longPollClient.AddMessageEvent += LongPollClientOnAddMessageEvent;
-            longPollClient.LongPollFailureReceived += LongPollClientOnLongPollFailureReceived;
+            longPollClient.AddMessageEvent += HandleMessage;
+            longPollClient.LongPollFailureReceived += HandleError;
         }
 
-        private async void LongPollClientOnAddMessageEvent(object o, Tuple<int, MessageFlags, JArray> tuple)
+        private async void HandleMessage(object o, Tuple<int, MessageFlags, JArray> tuple)
         {
             var peer = (int) tuple.Item3[3];
             var message = (string) tuple.Item3[6];
@@ -61,7 +61,7 @@ namespace VKBot
             await _api.Messages.Send(peerId: peer, message: message + "!");
         }
 
-        private void LongPollClientOnLongPollFailureReceived(object client, int i)
+        private void HandleError(object client, int i)
         {
             StartLongPoll();
         }
