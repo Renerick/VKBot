@@ -15,17 +15,23 @@ build:
     - cp ../Dockerfile ./bin/Release/netcoreapp2.0
   artifacts:
     paths:
-      - VKBot/bin/Release/
+      - VKBot/bin/Release/netcoreapp2.0
     expire_in: 2 days
 
 release:
   image: docker:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+  - docker:dind
+
   stage: release
   only:
     - master
   dependencies:
     - build
   script:
+    - cd VKBot/bin/Release/netcoreapp2.0
     - docker login -u Renerick -p $GITLAB_ACCESS_TOKEN registry.gitlab.com
     - docker build -t registry.gitlab.com/renerick/vkbot .
     - docker push registry.gitlab.com/renerick/vkbot
