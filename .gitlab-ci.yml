@@ -3,7 +3,7 @@ stages:
   - release
 
 variables:
-  - DOTNET_PUBLISH_PATH: ./bin/Release/publish
+  DOTNET_PUBLISH_PATH: ./bin/Release/publish
 
 build:
   image: microsoft/dotnet:latest
