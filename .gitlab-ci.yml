@@ -2,6 +2,8 @@ stages:
   - build
   - release
 
+variables:
+  - DOTNET_PUBLISH_PATH: ./bin/Release/publish
 
 build:
   image: microsoft/dotnet:latest
@@ -11,11 +13,11 @@ build:
   script:
     - dotnet restore
     - cd VKBot
-    - dotnet publish -c Release -o ./bin/Release
-    - cp ../Dockerfile ./bin/Release/netcoreapp2.0
+    - dotnet publish -c Release -o $DOTNET_PUBLISH_PATH
+    - cp ../Dockerfile $DOTNET_PUBLISH_PATH
   artifacts:
     paths:
-      - VKBot/bin/Release/netcoreapp2.0
+      - VKBot/$DOTNET_PUBLISH_PATH
     expire_in: 2 days
 
 release:
@@ -31,7 +33,7 @@ release:
   dependencies:
     - build
   script:
-    - cd VKBot/bin/Release/netcoreapp2.0
+    - cd VKBot/$DOTNET_PUBLISH_PATH
     - echo $CI_BOT_LOGIN > login.json
     - echo {} > config.json
     - docker login -u Renerick -p $GITLAB_ACCESS_TOKEN registry.gitlab.com
