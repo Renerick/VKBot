@@ -51,6 +51,9 @@ deploy:
 
   only:
     - master
+  before_script:
+    - mkdir -p /root/.ssh
+    - echo -e "Host *\n StrictHostKeyChecking no\n UserKnownHostsFile=/dev/null\n" >/root/.ssh/config
   script:
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
