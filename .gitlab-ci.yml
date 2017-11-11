@@ -52,7 +52,7 @@ deploy:
   only:
     - master
   script:
-    - ssh-agent -s
+    - eval $(ssh-agent -s)
     - ssh-add <(echo "$SSH_PRIVATE_KEY")
     - scp ./docker-compose.yml $DEPLOY_SERVER:~/docker
     - ssh $DEPLOY_SERVER 'bash -s' < ./docker/deploy.sh
