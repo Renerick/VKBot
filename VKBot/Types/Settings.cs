@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-using VkLibrary.Core.Types.Account;
 
 namespace VKBot.Types
 {
@@ -9,12 +7,6 @@ namespace VKBot.Types
     /// </summary>
     public class Settings
     {
-        /// <summary>
-        ///     Information about account used by bot
-        /// </summary>
-        [JsonIgnore]
-        public UserSettings BotAccount { get; set; } = null;
-
         /// <summary>
         ///     Users rights storage
         /// </summary>
