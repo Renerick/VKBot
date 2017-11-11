@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using VkLibrary.Core;
 using VkLibrary.Core.Auth;
 using VkLibrary.Core.LongPolling;
+using VKBot.PluginsManaging;
 using VKBot.Types;
 
 namespace VKBot
@@ -12,12 +13,10 @@ namespace VKBot
     {
         private readonly int _userId;
         private readonly Vkontakte _api;
+        private readonly MessageHandler _messageHandler;
 
         public VkBot(LoginData loginData, Settings settings, Action<object> logger = null)
         {
-            _userId = loginData.UserId;
-            Settings = settings;
-
             _api = new Vkontakte(loginData.AppId, JsonParsingType.UseStream, logger: logger);
 
             if (loginData.AccessToken != null)
@@ -29,6 +28,9 @@ namespace VKBot
             {
                 throw new NotImplementedException("There is no auth through login and password now");
             }
+            
+            _messageHandler = new MessageHandler(_api, new PluginsManager(), loginData.UserId);
+            Settings = settings;
         }
 
         public Settings Settings { get; }
@@ -50,15 +52,9 @@ namespace VKBot
             longPollClient.LongPollFailureReceived += HandleError;
         }
 
-        private async void HandleMessage(object o, Tuple<int, MessageFlags, JArray> tuple)
+        private void HandleMessage(object o, Tuple<int, MessageFlags, JArray> tuple)
         {
-            var peer = (int) tuple.Item3[3];
-            var message = (string) tuple.Item3[6];
-
-            if (!message.StartsWith("!") || tuple.Item2.HasFlag(MessageFlags.Outbox) ||
-                tuple.Item1 == _userId) return;
-
-            await _api.Messages.Send(peerId: peer, message: message + "!");
+            _messageHandler.HandleMessage(tuple);
         }
 
         private void HandleError(object client, int i)
