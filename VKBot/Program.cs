@@ -13,7 +13,7 @@ namespace VKBot
             {
                 var loginData = SettingsLoader.LoadApiAuthParams();
                 var settings = SettingsLoader.LoadConfiguration();
-                bot = new VkBot(loginData, settings, Console.WriteLine);
+                bot = new VkBot(loginData, settings, Logger);
             }
             catch (JsonException e)
             {
@@ -32,6 +32,11 @@ namespace VKBot
             }
             
             bot.StartBot();
+        }
+
+        private static void Logger(object o)
+        {
+            Console.WriteLine($"{DateTime.Now}: {o}");
         }
     }
 }
