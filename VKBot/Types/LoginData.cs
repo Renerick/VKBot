@@ -2,7 +2,8 @@
 {
     public class LoginData
     {
-        public string AppId { get; set; }
+        public int AppId { get; set; }
+        public string AppSecret { get; set; }
 
         public string Login { get; set; }
         public string Password { get; set; }

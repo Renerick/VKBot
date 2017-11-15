@@ -9,7 +9,7 @@ namespace VKBot
         private const string LoginPath = "./login.json";
         private const string ConfigPath = "./config.json";
 
-        public static LoginData LoadApiAuthParams()
+        public static LoginData LoadLoginData()
         {
             var loginData = ParseFile<LoginData>(LoginPath);
             return loginData;

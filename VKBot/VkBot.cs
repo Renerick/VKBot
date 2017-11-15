@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using VkLibrary.Core;
 using VkLibrary.Core.Auth;
 using VkLibrary.Core.LongPolling;
+using VkLibrary.Core.Services;
 using VKBot.PluginsManaging;
 using VKBot.Types;
 
@@ -11,13 +12,12 @@ namespace VKBot
 {
     public class VkBot
     {
-        private readonly int _userId;
         private readonly Vkontakte _api;
         private readonly MessageHandler _messageHandler;
 
-        public VkBot(LoginData loginData, Settings settings, Action<object> logger = null)
+        public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
-            _api = new Vkontakte(loginData.AppId, JsonParsingType.UseStream, logger: logger);
+            _api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
 
             if (loginData.AccessToken != null)
             {
