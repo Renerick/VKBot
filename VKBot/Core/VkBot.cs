@@ -8,32 +8,34 @@ using VkLibrary.Core.Services;
 using VKBot.PluginsManaging;
 using VKBot.Types;
 
-namespace VKBot
+namespace VKBot.Core
 {
     public class VkBot
     {
-        private readonly Vkontakte _api;
+        public Settings Settings { get; }
+
         private readonly MessageHandler _messageHandler;
 
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
-            _api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
+            Settings = settings;
+            
+            Settings.UserId = loginData.UserId;
+            Settings.Api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
 
             if (loginData.AccessToken != null)
             {
                 var accessToken = AccessToken.FromString(loginData.AccessToken, loginData.UserId);
-                _api.AccessToken = accessToken;
+                Settings.Api.AccessToken = accessToken;
             }
             else
             {
                 throw new NotImplementedException("There is no auth through login and password now");
             }
             
-            _messageHandler = new MessageHandler(_api, new PluginsManager(), loginData.UserId);
-            Settings = settings;
+            _messageHandler = new MessageHandler(Settings, new PluginsManager());
         }
 
-        public Settings Settings { get; }
 
         public void StartBot()
         {
@@ -44,8 +46,8 @@ namespace VKBot
 
         private void StartLongPoll()
         {
-            var longPollParams = _api.Messages.GetLongPollServer().Result;
-            var longPollClient = _api.StartLongPollClient(longPollParams.Server, longPollParams.Key, longPollParams.Ts)
+            var longPollParams = Settings.Api.Messages.GetLongPollServer().Result;
+            var longPollClient = Settings.Api.StartLongPollClient(longPollParams.Server, longPollParams.Key, longPollParams.Ts)
                 .Result;
 
             longPollClient.AddMessageEvent += HandleMessage;

@@ -1,7 +1,7 @@
 ﻿using System;
 using VkLibrary.Core.Services;
 
-namespace VKBot
+namespace VKBot.Core
 {
     public class Logger : ILogger
     {

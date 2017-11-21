@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using VKBot.Types;
 
-namespace VKBot
+namespace VKBot.Core
 {
     public static class SettingsLoader
     {
