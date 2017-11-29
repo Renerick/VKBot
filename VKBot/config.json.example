@@ -9,4 +9,7 @@
   
   // this level will be assigned to all users by default
   "defaultLevel": 1
+  
+  // prefixes for bot
+  "prefixes": []
 }

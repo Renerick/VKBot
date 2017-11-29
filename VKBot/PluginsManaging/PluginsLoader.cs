@@ -1,10 +1,14 @@
-﻿namespace VKBot.PluginsManaging
+﻿using VKBot.Plugins;
+using VKBot.Types;
+
+namespace VKBot.PluginsManaging
 {
-    /// <summary>
-    ///     This class is responsbile for loading of plugins
-    /// </summary>
     internal class PluginsLoader
     {
-        // TODO: implement this
+        public static PluginsProvider InitPlugins()
+        {
+            // TODO: replace with actual loader
+            return new PluginsProvider(new IPlugin[]{new TestPlugin()});
+        }
     }
 }

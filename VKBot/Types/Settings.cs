@@ -27,5 +27,10 @@ namespace VKBot.Types
         ///     Default user rights level
         /// </summary>
         public sbyte DefaultLevel { get; set; }
+        
+        /// <summary>
+        ///     Array which contains the set of bot command prefixes
+        /// </summary>
+        public string[] Prefixes { get; set; }
     }
 }
