@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
@@ -8,7 +9,7 @@ namespace VKBot.Plugins
 {
     class TestPlugin : IPlugin
     {
-        public string[] Commands { get; } = {"тест"};
+        public IEnumerable<string> Commands { get; } = new[]{"тест"};
 
         public Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
         {

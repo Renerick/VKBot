@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
+using VKBot.Plugins;
 using VKBot.Types;
 
 namespace VKBot.PluginsManaging
 {
     internal class PluginsProvider
     {
-        public Dictionary<string, IPlugin> PluginsList { get; } = new Dictionary<string, IPlugin>();
+        private Dictionary<string, IPlugin> PluginsList { get; } = new Dictionary<string, IPlugin>();
 
         /// <summary>
         /// Initialize plugins provider
         /// </summary>
-        /// <param name="plugins">Collection of plugins to work with</param>
+        /// <param name="plugins">Collection of plugins</param>
         public PluginsProvider(IEnumerable<IPlugin> plugins)
         {
             foreach (var plugin in plugins)
@@ -27,10 +26,15 @@ namespace VKBot.PluginsManaging
             }
         }
 
-        public Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
+        public async void Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
         {
-            //TODO: replace with actual handling
-            return PluginsList.Values.First().Handle(settings, tuple);
+            var messageTokens = ((string) tuple.Item3[6]).Split();
+
+            if (messageTokens.Length < 2) return;
+            var command = messageTokens[1];
+
+            if (PluginsList.TryGetValue(command, out var plugin))
+                await plugin.Handle(settings, tuple);
         }
     }
 }

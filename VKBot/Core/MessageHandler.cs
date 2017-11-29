@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
@@ -13,13 +14,13 @@ namespace VKBot.Core
         private readonly Settings _settings;
         private readonly PluginsProvider _plugins;
 
-        private Regex _prefixValidator;
+        private readonly Regex _prefixRegex;
         
         public MessageHandler(Settings settings)
         {
             _settings = settings;
             _plugins = PluginsLoader.InitPlugins();
-            _prefixValidator = new Regex(_buildValidatorRegex());
+            _prefixRegex = new Regex(_buildPrefixRegex());
         }
 
         public async void HandleMessage(Tuple<int, MessageFlags, JArray> tuple)
@@ -27,16 +28,19 @@ namespace VKBot.Core
             var peer = (int) tuple.Item3[3];
             var message = (string) tuple.Item3[6];
 
-            if (!_prefixValidator.IsMatch(message) || tuple.Item2.HasFlag(MessageFlags.Outbox) ||
+            if (!_prefixRegex.IsMatch(message) || tuple.Item2.HasFlag(MessageFlags.Outbox) ||
                 tuple.Item1 == _settings.UserId) return;
             
-            await _plugins.Handle(_settings, tuple);
+            _plugins.Handle(_settings, tuple);
         }
 
-        private string _buildValidatorRegex()
+        private string _buildPrefixRegex()
         {
             var sb = new StringBuilder("^(");
-            sb.Append(string.Join("|", _settings.Prefixes)).Append(")");
+
+            var escapedSettings = _settings.Prefixes.Select(Regex.Escape);
+            sb.Append(string.Join("|", escapedSettings)).Append(")");
+            
             return sb.ToString();
         }
     }
