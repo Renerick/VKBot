@@ -7,16 +7,17 @@ using VKBot.Types;
 
 namespace VKBot.Plugins
 {
+    [VkBotPlugin]
     class TestPlugin : IPlugin
     {
-        public IEnumerable<string> Commands { get; } = new[]{"тест"};
+        public IEnumerable<string> Commands { get; } = new[] {"тест"};
 
-        public Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
+        public async Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
         {
             var peer = (int) tuple.Item3[3];
             var message = (string) tuple.Item3[6];
 
-            return settings.Api.Messages.Send(peerId: peer, message: message + "!");
+            await settings.Api.Messages.Send(peerId: peer, message: message + "!");
         }
     }
 }

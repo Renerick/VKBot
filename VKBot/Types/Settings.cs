@@ -12,12 +12,12 @@ namespace VKBot.Types
         ///     Vk API reference
         /// </summary>
         public Vkontakte Api { get; internal set; }
-        
+
         /// <summary>
         ///     Bot account ID
         /// </summary>
         public int UserId { get; set; }
-        
+
         /// <summary>
         ///     Users rights storage
         /// </summary>
@@ -27,7 +27,7 @@ namespace VKBot.Types
         ///     Default user rights level
         /// </summary>
         public sbyte DefaultLevel { get; set; }
-        
+
         /// <summary>
         ///     Array which contains the set of bot command prefixes
         /// </summary>

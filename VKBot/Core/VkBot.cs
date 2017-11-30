@@ -12,10 +12,10 @@ namespace VKBot.Core
 {
     public class VkBot
     {
-        public Settings Settings { get; }
+        private Settings Settings { get; }
 
         private readonly MessageHandler _messageHandler;
-        
+
         /// <summary>
         /// Primary constructor, initialize bot settings
         /// </summary>
@@ -26,7 +26,7 @@ namespace VKBot.Core
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
             Settings = settings;
-            
+
             Settings.UserId = loginData.UserId;
             Settings.Api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
 
@@ -39,7 +39,7 @@ namespace VKBot.Core
             {
                 throw new NotImplementedException("There is no auth through login and password now");
             }
-            
+
             _messageHandler = new MessageHandler(Settings);
         }
 
@@ -56,7 +56,8 @@ namespace VKBot.Core
         private void StartLongPoll()
         {
             var longPollParams = Settings.Api.Messages.GetLongPollServer().Result;
-            var longPollClient = Settings.Api.StartLongPollClient(longPollParams.Server, longPollParams.Key, longPollParams.Ts)
+            var longPollClient = Settings.Api
+                .StartLongPollClient(longPollParams.Server, longPollParams.Key, longPollParams.Ts)
                 .Result;
 
             longPollClient.AddMessageEvent += HandleMessage;
