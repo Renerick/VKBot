@@ -40,11 +40,11 @@ namespace VKBot.Plugins
 
         private readonly Random _generator = new Random();
 
-        public async Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
+        public async Task Handle(Settings settings, VkMessage message)
         {
-            var peer = (int) tuple.Item3[3];
-            var message = _options[_generator.Next(_options.Length)];
-            await settings.Api.Messages.Send(peerId: peer, message: message);
+            var peer = message.Peer;
+            var responce = _options[_generator.Next(_options.Length)];
+            await settings.Api.Messages.Send(peerId: peer, message: responce);
         }
     }
 }

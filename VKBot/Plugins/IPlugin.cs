@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using VkLibrary.Core.LongPolling;
 using VKBot.Types;
 
 namespace VKBot.Plugins
@@ -12,8 +9,16 @@ namespace VKBot.Plugins
     /// </summary>
     public interface IPlugin
     {
+        /// <summary>
+        /// List of commands
+        /// </summary>
         IEnumerable<string> Commands { get; }
 
-        Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple);
+        /// <summary>
+        /// Method which handle new message
+        /// </summary>
+        /// <param name="settings">Bot settings</param>
+        /// <param name="message">Message object</param>
+        Task Handle(Settings settings, VkMessage message);
     }
 }

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using VkLibrary.Core.LongPolling;
-using VKBot.Plugins;
 using VKBot.Types;
 
-namespace VKBotPlugins
+namespace VKBot.Plugins
 {
     [VkBotPlugin]
     public class Stats : IPlugin
@@ -20,9 +17,9 @@ namespace VKBotPlugins
             _start = DateTime.Now;
         }
         
-        public Task Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
+        public Task Handle(Settings settings, VkMessage message)
         {
-            var peer = (int) tuple.Item3[3];
+            var peer = message.Peer;
             var result = $"Бот работает уже {DateTime.Now - _start:c}";
             return settings.Api.Messages.Send(peerId: peer, message: result);
         }
