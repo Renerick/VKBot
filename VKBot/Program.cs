@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
+using VKBot.Core;
 
 namespace VKBot
 {
@@ -8,35 +9,25 @@ namespace VKBot
     {
         private static void Main()
         {
-            VkBot bot;
             try
             {
-                var loginData = SettingsLoader.LoadApiAuthParams();
+                var loginData = SettingsLoader.LoadLoginData();
                 var settings = SettingsLoader.LoadConfiguration();
-                bot = new VkBot(loginData, settings, Logger);
+                var bot = new VkBot(loginData, settings, new Logger());
+                bot.StartBot();
             }
             catch (JsonException e)
             {
                 Console.WriteLine($"Configuration parse failure, {e.Message}");
-                return;
             }
             catch (IOException e)
             {
                 Console.WriteLine($"File reading failure, {e.Message}");
-                return;
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Unhandled exception, {e}");
-                return;
             }
-            
-            bot.StartBot();
-        }
-
-        private static void Logger(object o)
-        {
-            Console.WriteLine($"{DateTime.Now}: {o}");
         }
     }
 }

@@ -3,6 +3,8 @@
 {
   // Application id
   "applicationId": "12345",
+  // Application secret
+  "appSecret": "asdfa14324",
   
   // Necessary data for authentification
   "login": "login",
