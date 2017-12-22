@@ -10,9 +10,14 @@ namespace VKBot.Types
     public class VkMessage
     {
         /// <summary>
+        /// Id of message
+        /// </summary>
+        public int MessageId { get; }
+        
+        /// <summary>
         /// Text of the message
         /// </summary>
-        public string Message { get; }
+        public string Text { get; }
 
         /// <summary>
         /// Peer id
@@ -29,12 +34,13 @@ namespace VKBot.Types
         /// </summary>
         public MessageFlags Flags { get; }
 
-        public VkMessage(Tuple<int, MessageFlags, JArray> tuple)
+        public VkMessage(int messageId, string text, int peer, JObject attachments, MessageFlags flags)
         {
-            Message = (string)tuple.Item3[6];
-            Peer = (int) tuple.Item3[3];
-            Attachments = (JObject) tuple.Item3[7];
-            Flags = tuple.Item2;
+            MessageId = messageId;
+            Text = text ?? throw new ArgumentNullException(nameof(text));
+            Peer = peer;
+            Attachments = attachments;
+            Flags = flags;
         }
     }
 }

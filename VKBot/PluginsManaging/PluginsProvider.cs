@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using VkLibrary.Core.LongPolling;
+﻿using System.Collections.Generic;
 using VKBot.Plugins;
 using VKBot.Types;
 
@@ -25,20 +22,21 @@ namespace VKBot.PluginsManaging
                 }
             }
         }
+
         /// <summary>
         /// Handle new message
         /// </summary>
         /// <param name="settings">Bot settings</param>
-        /// <param name="tuple">Tuple of data from long poll server</param>
-        public void Handle(Settings settings, Tuple<int, MessageFlags, JArray> tuple)
+        /// <param name="message">New message to handle</param>
+        public void Handle(Settings settings, VkMessage message)
         {
-            var messageTokens = ((string) tuple.Item3[6]).Split();
+            var messageTokens = message.Text.Split();
 
             if (messageTokens.Length < 2) return;
             var command = messageTokens[1];
 
             if (PluginsList.TryGetValue(command, out var plugin))
-                plugin.Handle(settings, new VkMessage(tuple));
+                plugin.Handle(settings, message);
         }
     }
 }

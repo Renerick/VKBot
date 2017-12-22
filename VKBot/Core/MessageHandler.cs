@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
-using VkLibrary.Core.Types.Messages;
 using VKBot.PluginsManaging;
 using VKBot.Types;
 
@@ -24,9 +21,10 @@ namespace VKBot.Core
             _messageParser = new Regex(_buildPrefixRegex());
         }
 
-        public void HandleMessage(Message message)
+        public void HandleMessage(VkMessage message)
         {
-            
+            if (message.Flags.HasFlag(MessageFlags.Outbox) || message.Peer == _settings.UserId) return;
+            if (_messageParser.IsMatch(message.Text)) _plugins.Handle(_settings, message);
         }
 
         private string _buildPrefixRegex()

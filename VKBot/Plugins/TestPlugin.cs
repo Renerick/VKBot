@@ -11,7 +11,7 @@ namespace VKBot.Plugins
 
         public async Task Handle(Settings settings, VkMessage message)
         {
-            await settings.Api.Messages.Send(peerId: message.Peer, message: message.Message + "!");
+            await settings.Api.Messages.Send(peerId: message.Peer, message: message.Text + "!");
         }
     }
 }

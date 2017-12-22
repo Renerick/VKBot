@@ -13,7 +13,7 @@ namespace VKBot.Plugins
 
         public Task Handle(Settings settings, VkMessage message)
         {
-            var messageTokens = message.Message.Split();
+            var messageTokens = message.Text.Split();
 
             int limit;
 

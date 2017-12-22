@@ -1,47 +1,97 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using VkLibrary.Core.Types.Messages;
+using VkLibrary.Core.LongPolling;
 using VKBot.Types;
 
 namespace VKBot.Core
 {
     /// <summary>
-    /// Provide long poll client for VK
+    ///     Provide long poll client for VK
     /// </summary>
     public class LongPollClient
     {
-        private string _serverUrl;
-        private string _key;
-        private uint _ts;
-        private int _wait = 25;
-        private int _mode;
-        private readonly int _version = 2;
-        private bool _isActive;
+        private readonly Uri _apiUrl = new Uri("https://api.vk.com/");
 
         private readonly HttpClient _httpClient = new HttpClient();
 
-        private readonly Uri _apiUrl = new Uri("https://api.vk.com/");
-
         private readonly Settings _settings;
-
-        public event EventHandler<Message> OnMessage;
+        private readonly int _version = 2;
+        private bool _isActive;
+        private string _key;
+        private int _mode;
+        private string _serverUrl;
+        private uint _ts;
+        private readonly int _wait = 25;
 
         public LongPollClient(Settings settings)
         {
             _settings = settings;
             _isActive = false;
-            _getLongPollServer();
         }
+
+        public event EventHandler<VkMessage> OnMessage;
 
         public async void Start()
         {
+            _getLongPollServer();
             _isActive = true;
             while (_isActive)
             {
-                _sendRequest();
+                var changes = await _sendRequest();
+                _handleUpdates(changes);
             }
         }
+
+        public void Stop()
+        {
+            _isActive = false;
+        }
+        
+        private void _handleUpdates(JObject changes)
+        {
+            if (changes["failed"] != null)
+            {
+                _settings.Logger.Log("Error received, handling...");
+                switch ((int) changes["failed"])
+                {
+                    case 1:
+                        _ts = (uint) changes["new_ts"];
+                        _settings.Logger.Log("Ts updated");
+                        break;
+                    case 2:
+                    case 3:
+                        _getLongPollServer();
+                        _settings.Logger.Log("New long poll configuration obtained");
+                        break;
+                }
+                return;
+            }
+            _ts = (uint) changes["ts"];
+            var updates = (JArray) changes["updates"];
+
+            foreach (var update in updates)
+                switch ((int) update[0])
+                {
+                    case 4:
+                    {
+                        var updateArr = (JArray) update;
+                        var id = (int) updateArr[1];
+                        var text = (string) updateArr[5];
+                        var peer = (int) updateArr[3];
+                        JObject attachments = null;
+                        if (updateArr.Count > 6)
+                            attachments = (JObject) update[6];
+                        var flags = (MessageFlags) (int) update[2];
+                        var message = new VkMessage(id, text, peer, attachments, flags);
+                        _settings.Logger.Log("Invoke OnMessage event");
+                        OnMessage?.Invoke(this, message);
+                        break;
+                    }
+                }
+        }
+
 
         private void _getLongPollServer()
         {
@@ -55,10 +105,10 @@ namespace VKBot.Core
 
             var responce = _httpClient.GetStringAsync(urlBuilder.Uri).Result;
 
-            _settings.Logger.Log($"Responce received, deserializing...");
+            _settings.Logger.Log("Responce received, deserializing...");
 
             var serverParams = JObject.Parse(responce)["response"];
-            
+
             _ts = (uint) serverParams["ts"];
             _serverUrl = (string) serverParams["server"];
             _key = (string) serverParams["key"];
@@ -66,18 +116,17 @@ namespace VKBot.Core
             _settings.Logger.Log("Deserializing complete, long poll configured");
         }
 
-        private void _sendRequest()
+        private async Task<JObject> _sendRequest()
         {
-            
-            _settings.Logger.Log($"Executing long poll request...");
+            _settings.Logger.Log("Executing long poll request...");
 
-            var updates = _httpClient.GetStringAsync(
-                $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version=2&wait={_wait}").Result;
+            var updates = await _httpClient.GetStringAsync(
+                $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version=2&wait={_wait}");
 
             _settings.Logger.Log($"Updates received {updates.Trim()}");
 
             var updatesDeserialized = JObject.Parse(updates);
-            _ts = (uint) updatesDeserialized["ts"];
+            return updatesDeserialized;
         }
     }
 }

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using VkLibrary.Core;
 using VkLibrary.Core.Auth;
-using VkLibrary.Core.LongPolling;
 using VkLibrary.Core.Services;
-using VkLibrary.Core.Types.Messages;
 using VKBot.Types;
 
 namespace VKBot.Core
@@ -62,7 +59,7 @@ namespace VKBot.Core
             _longPollClient.Start();
         }
 
-        private void HandleMessage(object o, Message message)
+        private void HandleMessage(object o, VkMessage message)
         {
             _messageHandler.HandleMessage(message);
         }
