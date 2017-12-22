@@ -5,7 +5,7 @@ using VkLibrary.Core;
 using VkLibrary.Core.Auth;
 using VkLibrary.Core.LongPolling;
 using VkLibrary.Core.Services;
-using VKBot.PluginsManaging;
+using VkLibrary.Core.Types.Messages;
 using VKBot.Types;
 
 namespace VKBot.Core
@@ -15,6 +15,7 @@ namespace VKBot.Core
         private Settings Settings { get; }
 
         private readonly MessageHandler _messageHandler;
+        private LongPollClient _longPollClient;
 
         /// <summary>
         /// Primary constructor, initialize bot settings
@@ -26,6 +27,7 @@ namespace VKBot.Core
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
             Settings = settings;
+            Settings.Logger = logger;
 
             Settings.UserId = loginData.UserId;
             Settings.Api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
@@ -41,6 +43,7 @@ namespace VKBot.Core
             }
 
             _messageHandler = new MessageHandler(Settings);
+            _longPollClient = new LongPollClient(Settings);
         }
 
         /// <summary>
@@ -55,23 +58,13 @@ namespace VKBot.Core
 
         private void StartLongPoll()
         {
-            var longPollParams = Settings.Api.Messages.GetLongPollServer().Result;
-            var longPollClient = Settings.Api
-                .StartLongPollClient(longPollParams.Server, longPollParams.Key, longPollParams.Ts)
-                .Result;
-
-            longPollClient.AddMessageEvent += HandleMessage;
-            longPollClient.LongPollFailureReceived += HandleError;
+            _longPollClient.OnMessage += HandleMessage;
+            _longPollClient.Start();
         }
 
-        private void HandleMessage(object o, Tuple<int, MessageFlags, JArray> tuple)
+        private void HandleMessage(object o, Message message)
         {
-            _messageHandler.HandleMessage(tuple);
-        }
-
-        private void HandleError(object client, int i)
-        {
-            StartLongPoll();
+            _messageHandler.HandleMessage(message);
         }
     }
 }
