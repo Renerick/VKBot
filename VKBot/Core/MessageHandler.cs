@@ -2,7 +2,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using VkLibrary.Core.LongPolling;
-using VKBot.PluginsManaging;
 using VKBot.Types;
 
 namespace VKBot.Core
@@ -10,14 +9,14 @@ namespace VKBot.Core
     internal class MessageHandler
     {
         private readonly Settings _settings;
-        private readonly PluginsProvider _plugins;
+        private readonly PluginsManager _plugins;
 
         private readonly Regex _messageParser;
 
         public MessageHandler(Settings settings)
         {
             _settings = settings;
-            _plugins = PluginsLoader.InitPlugins();
+            _plugins = new PluginsManager();
             _messageParser = new Regex(_buildPrefixRegex());
         }
 

@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using VKBot.Plugins;
 using VKBot.Types;
 
-namespace VKBot.PluginsManaging
+namespace VKBot.Core
 {
-    internal class PluginsProvider
+    internal class PluginsManager
     {
         private Dictionary<string, IPlugin> PluginsList { get; } = new Dictionary<string, IPlugin>();
 
@@ -12,8 +15,19 @@ namespace VKBot.PluginsManaging
         /// Initialize plugins provider
         /// </summary>
         /// <param name="plugins">Collection of plugins</param>
-        public PluginsProvider(IEnumerable<IPlugin> plugins)
+        public PluginsManager()
         {
+            var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
+
+            var classes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .Where(x => Attribute.IsDefined(x, typeof(VkBotPluginAttribute)));
+            
+            foreach (var plugin in classes)
+            {
+                plugins.Add((IPlugin) Activator.CreateInstance(plugin));
+            }
+            
             foreach (var plugin in plugins)
             {
                 foreach (var command in plugin.Commands)

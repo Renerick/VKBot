@@ -12,7 +12,7 @@ namespace VKBot.Core
         private Settings Settings { get; }
 
         private readonly MessageHandler _messageHandler;
-        private LongPollClient _longPollClient;
+        private readonly LongPollClient _longPollClient;
 
         /// <summary>
         /// Primary constructor, initialize bot settings
@@ -61,7 +61,15 @@ namespace VKBot.Core
 
         private void HandleMessage(object o, VkMessage message)
         {
-            _messageHandler.HandleMessage(message);
+            try
+            {
+                _messageHandler.HandleMessage(message);
+            }
+            catch (Exception e)
+            {
+                Settings.Logger.Log("Excpetion while handling message");
+                Settings.Logger.Log(e);
+            }
         }
     }
 }
