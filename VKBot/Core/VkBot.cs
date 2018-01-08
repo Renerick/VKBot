@@ -9,18 +9,20 @@ namespace VKBot.Core
 {
     public class VkBot
     {
-        private Settings Settings { get; }
-
-        private readonly MessageHandler _messageHandler;
         private readonly LongPollClient _longPollClient;
 
+        private readonly MessageHandler _messageHandler;
+
         /// <summary>
-        /// Primary constructor, initialize bot settings
+        ///     Primary constructor, initialize bot settings
         /// </summary>
         /// <param name="loginData">Data for login to VK</param>
         /// <param name="settings">Bot settings object</param>
         /// <param name="logger">Logger object</param>
-        /// <exception cref="NotImplementedException">Bot can't use login and password for authentification for now, so there is an exception</exception>
+        /// <exception cref="NotImplementedException">
+        ///     Bot can't use login and password for authentification for now, so there is an
+        ///     exception
+        /// </exception>
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
             Settings = settings;
@@ -43,8 +45,10 @@ namespace VKBot.Core
             _longPollClient = new LongPollClient(Settings);
         }
 
+        private Settings Settings { get; }
+
         /// <summary>
-        ///     Start bot's long poll message receiving 
+        ///     Start bot's long poll message receiving
         /// </summary>
         public void StartBot()
         {

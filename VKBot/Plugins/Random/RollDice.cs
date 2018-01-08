@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VKBot.Types;
 
@@ -7,9 +8,8 @@ namespace VKBot.Plugins
     [VkBotPlugin]
     public class RollDice : IPlugin
     {
+        private readonly Random _random = new Random();
         public IEnumerable<string> Commands { get; } = new[] {"roll", "кубик", "dice", "random", "рандом"};
-
-        private readonly System.Random _random = new System.Random();
 
         public Task Handle(Settings settings, VkMessage message)
         {

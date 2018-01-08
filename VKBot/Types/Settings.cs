@@ -33,7 +33,7 @@ namespace VKBot.Types
         ///     Array which contains the set of bot command prefixes
         /// </summary>
         public string[] Prefixes { get; set; }
-        
+
         /// <summary>
         ///     Logger for Bot
         /// </summary>

@@ -8,15 +8,15 @@ namespace VKBot.Plugins
     [VkBotPlugin]
     public class Stats : IPlugin
     {
-        public IEnumerable<string> Commands { get; } = new[] {"stats", "статы"};
-
         private readonly DateTime _start;
 
         public Stats()
         {
             _start = DateTime.Now;
         }
-        
+
+        public IEnumerable<string> Commands { get; } = new[] {"stats", "статы"};
+
         public Task Handle(Settings settings, VkMessage message)
         {
             var peer = message.Peer;

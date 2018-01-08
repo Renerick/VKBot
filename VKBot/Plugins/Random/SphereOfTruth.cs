@@ -8,7 +8,7 @@ namespace VKBot.Plugins
     [VkBotPlugin]
     public class SphereOfTruth : IPlugin
     {
-        public IEnumerable<string> Commands { get; } = new[] {"шар"};
+        private readonly Random _generator = new Random();
 
         private readonly string[] _options =
         {
@@ -36,7 +36,7 @@ namespace VKBot.Plugins
             "Лучше Вам пока этого не знать"
         };
 
-        private readonly Random _generator = new Random();
+        public IEnumerable<string> Commands { get; } = new[] {"шар"};
 
         public async Task Handle(Settings settings, VkMessage message)
         {

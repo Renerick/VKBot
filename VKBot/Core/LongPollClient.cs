@@ -18,12 +18,12 @@ namespace VKBot.Core
 
         private readonly Settings _settings;
         private readonly int _version = 2;
+        private readonly int _wait = 25;
         private bool _isActive;
         private string _key;
         private int _mode;
         private string _serverUrl;
         private uint _ts;
-        private readonly int _wait = 25;
 
         public LongPollClient(Settings settings)
         {
@@ -48,7 +48,7 @@ namespace VKBot.Core
         {
             _isActive = false;
         }
-        
+
         private void _handleUpdates(JObject changes)
         {
             if (changes["failed"] != null)

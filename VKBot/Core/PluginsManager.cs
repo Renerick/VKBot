@@ -9,12 +9,9 @@ namespace VKBot.Core
 {
     internal class PluginsManager
     {
-        private Dictionary<string, IPlugin> PluginsList { get; } = new Dictionary<string, IPlugin>();
-
         /// <summary>
-        /// Initialize plugins provider
+        ///     Initialize plugins provider
         /// </summary>
-        /// <param name="plugins">Collection of plugins</param>
         public PluginsManager()
         {
             var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
@@ -22,23 +19,19 @@ namespace VKBot.Core
             var classes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
                 .Where(x => Attribute.IsDefined(x, typeof(VkBotPluginAttribute)));
-            
+
             foreach (var plugin in classes)
-            {
                 plugins.Add((IPlugin) Activator.CreateInstance(plugin));
-            }
-            
+
             foreach (var plugin in plugins)
-            {
-                foreach (var command in plugin.Commands)
-                {
-                    PluginsList[command] = plugin;
-                }
-            }
+            foreach (var command in plugin.Commands)
+                PluginsList[command] = plugin;
         }
 
+        private Dictionary<string, IPlugin> PluginsList { get; } = new Dictionary<string, IPlugin>();
+
         /// <summary>
-        /// Handle new message
+        ///     Handle new message
         /// </summary>
         /// <param name="settings">Bot settings</param>
         /// <param name="message">New message to handle</param>

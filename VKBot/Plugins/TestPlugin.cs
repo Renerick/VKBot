@@ -5,7 +5,7 @@ using VKBot.Types;
 namespace VKBot.Plugins
 {
     [VkBotPlugin]
-    class TestPlugin : IPlugin
+    internal class TestPlugin : IPlugin
     {
         public IEnumerable<string> Commands { get; } = new[] {"тест"};
 

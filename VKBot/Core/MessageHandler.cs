@@ -8,10 +8,9 @@ namespace VKBot.Core
 {
     internal class MessageHandler
     {
-        private readonly Settings _settings;
-        private readonly PluginsManager _plugins;
-
         private readonly Regex _messageParser;
+        private readonly PluginsManager _plugins;
+        private readonly Settings _settings;
 
         public MessageHandler(Settings settings)
         {
@@ -32,6 +31,7 @@ namespace VKBot.Core
 
             var escapedSettings = _settings.Prefixes.Select(Regex.Escape);
             sb.Append(string.Join("|", escapedSettings)).Append(") *(.+)");
+            _settings.Logger.Log($"Builded out command regex: '{sb}'");
 
             return sb.ToString();
         }

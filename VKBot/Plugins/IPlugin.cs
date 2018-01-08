@@ -10,12 +10,12 @@ namespace VKBot.Plugins
     public interface IPlugin
     {
         /// <summary>
-        /// List of commands
+        ///     List of commands
         /// </summary>
         IEnumerable<string> Commands { get; }
 
         /// <summary>
-        /// Method which handle new message
+        ///     Method which handle new message
         /// </summary>
         /// <param name="settings">Bot settings</param>
         /// <param name="message">Message object</param>
