@@ -40,7 +40,11 @@ namespace VKBot.Core
             while (_isActive)
             {
                 var changes = await _sendRequest();
-                _handleUpdates(changes);
+                
+                if (changes != null) 
+                    _handleChanges(changes);
+                else
+                    Task.Delay(20000).Wait();
             }
         }
 
@@ -49,7 +53,7 @@ namespace VKBot.Core
             _isActive = false;
         }
 
-        private void _handleUpdates(JObject changes)
+        private void _handleChanges(JObject changes)
         {
             if (changes["failed"] != null)
             {
@@ -100,33 +104,47 @@ namespace VKBot.Core
                 Path = "method/messages.getLongPollServer",
                 Query = $"access_token={_settings.Api.AccessToken.Token}&v=5.63"
             };
+            try
+            {
+                _settings.Logger.Log($"Getting server, executing GET request {urlBuilder}");
 
-            _settings.Logger.Log($"Executing GET request {urlBuilder}");
+                var responce = _httpClient.GetStringAsync(urlBuilder.Uri).Result;
 
-            var responce = _httpClient.GetStringAsync(urlBuilder.Uri).Result;
+                _settings.Logger.Log("Responce received, deserializing...");
 
-            _settings.Logger.Log("Responce received, deserializing...");
+                var serverParams = JObject.Parse(responce)["response"];
 
-            var serverParams = JObject.Parse(responce)["response"];
+                _ts = (uint) serverParams["ts"];
+                _serverUrl = (string) serverParams["server"];
+                _key = (string) serverParams["key"];
 
-            _ts = (uint) serverParams["ts"];
-            _serverUrl = (string) serverParams["server"];
-            _key = (string) serverParams["key"];
-
-            _settings.Logger.Log("Deserializing complete, long poll configured");
+                _settings.Logger.Log("Deserializing complete, long poll configured");
+            }
+            catch (Exception e)
+            {
+                _settings.Logger.Log(e.ToString());
+            }
         }
 
         private async Task<JObject> _sendRequest()
         {
             _settings.Logger.Log("Executing long poll request...");
 
-            var updates = await _httpClient.GetStringAsync(
-                $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version=2&wait={_wait}");
+            try
+            {
+                var updates = await _httpClient.GetStringAsync(
+                    $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version=2&wait={_wait}");
 
-            _settings.Logger.Log($"Updates received {updates.Trim()}");
+                _settings.Logger.Log($"Updates received {updates.Trim()}");
 
-            var updatesDeserialized = JObject.Parse(updates);
-            return updatesDeserialized;
+                var updatesDeserialized = JObject.Parse(updates);
+                return updatesDeserialized;
+            }
+            catch (HttpRequestException e)
+            {
+                _settings.Logger.Log(e.Message);
+                return null;
+            }
         }
     }
 }
