@@ -40,8 +40,8 @@ namespace VKBot.Core
             while (_isActive)
             {
                 var changes = await _sendRequest();
-                
-                if (changes != null) 
+
+                if (changes != null)
                     _handleChanges(changes);
                 else
                     Task.Delay(20000).Wait();
@@ -67,11 +67,12 @@ namespace VKBot.Core
                     case 2:
                     case 3:
                         _getLongPollServer();
-                        _settings.Logger.Log("New long poll configuration obtained");
                         break;
                 }
+
                 return;
             }
+
             _ts = (uint) changes["ts"];
             var updates = (JArray) changes["updates"];
 
@@ -118,7 +119,7 @@ namespace VKBot.Core
                 _serverUrl = (string) serverParams["server"];
                 _key = (string) serverParams["key"];
 
-                _settings.Logger.Log("Deserializing complete, long poll configured");
+                _settings.Logger.Log("Deserialization complete, new long poll configuration obtained");
             }
             catch (Exception e)
             {
@@ -128,14 +129,18 @@ namespace VKBot.Core
 
         private async Task<JObject> _sendRequest()
         {
+#if DEBUG
             _settings.Logger.Log("Executing long poll request...");
+#endif
 
             try
             {
                 var updates = await _httpClient.GetStringAsync(
-                    $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version=2&wait={_wait}");
+                    $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version={_version}&wait={_wait}");
 
+#if DEBUG
                 _settings.Logger.Log($"Updates received {updates.Trim()}");
+#endif
 
                 var updatesDeserialized = JObject.Parse(updates);
                 return updatesDeserialized;
