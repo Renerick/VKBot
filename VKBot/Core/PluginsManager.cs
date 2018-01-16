@@ -17,18 +17,18 @@ namespace VKBot.Core
             var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
 
             var classes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(x => x.GetTypes())
-                .Where(x => Attribute.IsDefined(x, typeof(VkBotPluginAttribute)));
+                                   .SelectMany(x => x.GetTypes())
+                                   .Where(x => Attribute.IsDefined(x, typeof(VkBotPluginAttribute)));
 
             foreach (var plugin in classes)
                 plugins.Add((IPlugin) Activator.CreateInstance(plugin));
 
             foreach (var plugin in plugins)
             foreach (var command in plugin.Commands)
-                PluginsList[command] = plugin;
+                PluginsDict[command] = plugin;
         }
 
-        private Dictionary<string, IPlugin> PluginsList { get; } = new Dictionary<string, IPlugin>();
+        private Dictionary<string, IPlugin> PluginsDict { get; } = new Dictionary<string, IPlugin>();
 
         /// <summary>
         ///     Handle new message
@@ -42,7 +42,7 @@ namespace VKBot.Core
             if (messageTokens.Length < 2) return;
             var command = messageTokens[1];
 
-            if (PluginsList.TryGetValue(command, out var plugin))
+            if (PluginsDict.TryGetValue(command, out var plugin))
                 plugin.Handle(settings, message);
         }
     }

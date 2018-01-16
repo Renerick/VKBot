@@ -85,9 +85,11 @@ namespace VKBot.Core
                         var id = (int) updateArr[1];
                         var text = (string) updateArr[5];
                         var peer = (int) updateArr[3];
+                        
                         JObject attachments = null;
                         if (updateArr.Count > 6)
                             attachments = (JObject) update[6];
+                       
                         var flags = (MessageFlags) (int) update[2];
                         var message = new VkMessage(id, text, peer, attachments, flags);
                         _settings.Logger.Log("Invoke OnMessage event");
@@ -145,7 +147,7 @@ namespace VKBot.Core
                 var updatesDeserialized = JObject.Parse(updates);
                 return updatesDeserialized;
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
                 _settings.Logger.Log(e.Message);
                 return null;
