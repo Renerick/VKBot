@@ -25,7 +25,7 @@ namespace VKBot.Core
 
             foreach (var plugin in plugins)
             foreach (var command in plugin.Commands)
-                PluginsDict[command] = plugin;
+                PluginsDict[command.ToLowerInvariant()] = plugin;
         }
 
         private Dictionary<string, IPlugin> PluginsDict { get; } = new Dictionary<string, IPlugin>();
@@ -40,7 +40,7 @@ namespace VKBot.Core
             var messageTokens = message.Text.Split();
 
             if (messageTokens.Length < 2) return;
-            var command = messageTokens[1];
+            var command = messageTokens[1].ToLowerInvariant();
 
             if (PluginsDict.TryGetValue(command, out var plugin))
                 plugin.Handle(settings, message);
