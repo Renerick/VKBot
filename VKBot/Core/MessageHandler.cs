@@ -27,11 +27,11 @@ namespace VKBot.Core
 
         private string _buildPrefixRegex()
         {
-            var sb = new StringBuilder("^(");
+            var sb = new StringBuilder("(?i)^(");
 
             var escapedSettings = _settings.Prefixes.Select(Regex.Escape);
             sb.Append(string.Join("|", escapedSettings)).Append(") *(.+)");
-            _settings.Logger.Log($"Builded out command regex: '{sb}'");
+            _settings.Logger.Log($"Command regex has been built: '{sb}'");
 
             return sb.ToString();
         }
