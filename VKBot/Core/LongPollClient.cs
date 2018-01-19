@@ -39,12 +39,19 @@ namespace VKBot.Core
             _isActive = true;
             while (_isActive)
             {
-                var changes = await _sendRequest();
+                try
+                {
+                    var changes = await _sendRequest();
 
-                if (changes != null)
-                    _handleChanges(changes);
-                else
-                    Task.Delay(20000).Wait();
+                    if (changes != null)
+                        _handleChanges(changes);
+                    else
+                        Task.Delay(20000).Wait();
+                }
+                catch (Exception e)
+                {
+                    _settings.Logger.Log($"UNHANDLED EXCEPTION: {e}");
+                }
             }
         }
 
@@ -85,11 +92,11 @@ namespace VKBot.Core
                         var id = (int) updateArr[1];
                         var text = (string) updateArr[5];
                         var peer = (int) updateArr[3];
-                        
+
                         JObject attachments = null;
                         if (updateArr.Count > 6)
                             attachments = (JObject) update[6];
-                       
+
                         var flags = (MessageFlags) (int) update[2];
                         var message = new VkMessage(id, text, peer, attachments, flags);
                         _settings.Logger.Log("Invoke OnMessage event");
