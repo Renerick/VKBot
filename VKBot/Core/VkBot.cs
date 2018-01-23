@@ -9,7 +9,7 @@ namespace VKBot.Core
 {
     public class VkBot
     {
-        private readonly LongPollClient _longPollClient;
+        private readonly VkLongPollClient _longPollClient;
 
         private readonly MessageHandler _messageHandler;
 
@@ -42,7 +42,7 @@ namespace VKBot.Core
             }
 
             _messageHandler = new MessageHandler(Settings);
-            _longPollClient = new LongPollClient(Settings);
+            _longPollClient = new VkLongPollClient(Settings.Api.AccessToken.Token, Settings.Logger);
         }
 
         private Settings Settings { get; }
@@ -71,8 +71,7 @@ namespace VKBot.Core
             }
             catch (Exception e)
             {
-                Settings.Logger.Log("Excpetion while handling message");
-                Settings.Logger.Log(e);
+                Settings.Logger.Log($"Exception while handling message\n{e}");
             }
         }
     }
