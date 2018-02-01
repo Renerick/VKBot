@@ -13,16 +13,15 @@ namespace VKBot.Core
     /// </summary>
     public class VkLongPollClient
     {
+        private readonly string _apiAccessToken;
         private readonly Uri _apiUrl = new Uri("https://api.vk.com/");
 
         private readonly HttpClient _httpClient;
-
-        private readonly string _apiAccessToken;
-        private ILogger _logger;
         private readonly int _version = 2;
         private readonly int _wait = 25;
         private bool _isActive;
         private string _key;
+        private readonly ILogger _logger;
         private string _serverUrl;
         private uint _ts;
 
@@ -33,14 +32,13 @@ namespace VKBot.Core
             _httpClient = new HttpClient();
         }
 
-        public event EventHandler<VkMessage> OnMessage;
+        public event EventHandler<MessageEventArgs> OnMessage;
 
         public async void Start()
         {
             _getLongPollServer();
             _isActive = true;
             while (_isActive)
-            {
                 try
                 {
                     var changes = await _sendRequest();
@@ -48,10 +46,9 @@ namespace VKBot.Core
                 }
                 catch (Exception e)
                 {
-                    _logger.Log($"Exception in long poll request, trying again...\n{e}");
+                    _logger.Log($"Received an exception during a long poll request, trying again...\n{e}");
                     Task.Delay(2000).Wait();
                 }
-            }
         }
 
         public void Stop()
@@ -99,7 +96,7 @@ namespace VKBot.Core
                         var flags = (MessageFlags) (int) update[2];
                         var message = new VkMessage(id, text, peer, attachments, flags);
                         _logger.Log("Invoke OnMessage event");
-                        OnMessage?.Invoke(this, message);
+                        _onMessage(new MessageEventArgs(message));
                         break;
                     }
                 }
@@ -133,6 +130,12 @@ namespace VKBot.Core
             {
                 _logger.Log(e.ToString());
             }
+        }
+
+        private void _onMessage(MessageEventArgs message)
+        {
+            var h = OnMessage;
+            h?.Invoke(this, message);
         }
 
         private async Task<JObject> _sendRequest()

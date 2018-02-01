@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VkLibrary.Core;
 using VkLibrary.Core.Auth;
+using VkLibrary.Core.LongPolling;
 using VkLibrary.Core.Services;
 using VKBot.Types;
 
@@ -11,7 +15,7 @@ namespace VKBot.Core
     {
         private readonly VkLongPollClient _longPollClient;
 
-        private readonly MessageHandler _messageHandler;
+        private readonly PluginsService _plugins;
 
         /// <summary>
         ///     Primary constructor, initialize bot settings
@@ -20,7 +24,7 @@ namespace VKBot.Core
         /// <param name="settings">Bot settings object</param>
         /// <param name="logger">Logger object</param>
         /// <exception cref="NotImplementedException">
-        ///     Bot can't use login and password for authentification for now, so there is an
+        ///     Bot can't use login and password for authentification now, so there is the
         ///     exception
         /// </exception>
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
@@ -31,6 +35,7 @@ namespace VKBot.Core
             Settings.UserId = loginData.UserId;
             Settings.Api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
 
+            // login
             if (loginData.AccessToken != null)
             {
                 var accessToken = AccessToken.FromString(loginData.AccessToken, loginData.UserId);
@@ -41,8 +46,10 @@ namespace VKBot.Core
                 throw new NotImplementedException("There is no auth through login and password now");
             }
 
-            _messageHandler = new MessageHandler(Settings);
             _longPollClient = new VkLongPollClient(Settings.Api.AccessToken.Token, Settings.Logger);
+
+            VkMessage.CommandRegex = _buildPrefixRegex();
+            _plugins = new PluginsService();
         }
 
         private Settings Settings { get; }
@@ -63,16 +70,33 @@ namespace VKBot.Core
             _longPollClient.Start();
         }
 
-        private void HandleMessage(object o, VkMessage message)
+        private void HandleMessage(object o, MessageEventArgs e)
         {
             try
             {
-                _messageHandler.HandleMessage(message);
+                _handle(e.Message);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Settings.Logger.Log($"Exception while handling message\n{e}");
+                Settings.Logger.Log($"Exception in message handler\n{exception}");
             }
+        }
+
+        private Regex _buildPrefixRegex()
+        {
+            var sb = new StringBuilder("(?i)^(");
+
+            var escapedSettings = Settings.Prefixes.Select(Regex.Escape);
+            sb.Append(string.Join("|", escapedSettings)).Append(") *(.+)");
+            Settings.Logger.Log($"Command regex has been built: '{sb}'");
+
+            return new Regex(sb.ToString());
+        }
+
+        private void _handle(VkMessage message)
+        {
+            if (message.Flags.HasFlag(MessageFlags.Outbox) || message.Peer == Settings.UserId) return;
+            if (message.IsCommand) _plugins.Handle(Settings, message);
         }
     }
 }

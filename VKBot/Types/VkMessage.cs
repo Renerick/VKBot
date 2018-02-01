@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
 
@@ -9,6 +10,10 @@ namespace VKBot.Types
     /// </summary>
     public class VkMessage
     {
+        /// <summary>
+        /// </summary>
+        private static Regex _commandRegex;
+
         public VkMessage(int messageId, string text, int peer, JObject attachments, MessageFlags flags)
         {
             MessageId = messageId;
@@ -16,6 +21,18 @@ namespace VKBot.Types
             Peer = peer;
             Attachments = attachments;
             Flags = flags;
+        }
+
+        public static Regex CommandRegex
+        {
+            get => _commandRegex;
+            set
+            {
+                if (_commandRegex == null)
+                    _commandRegex = value;
+                else
+                    throw new Exception("Command regex can't be redefined");
+            }
         }
 
         /// <summary>
@@ -42,5 +59,13 @@ namespace VKBot.Types
         ///     Message flags
         /// </summary>
         public MessageFlags Flags { get; }
+
+        public string Prefix => _commandRegex.Match(Text).Groups[1].Value;
+        public string Command => _commandRegex.Match(Text).Groups[2].Value;
+
+        /// <summary>
+        ///     Check if message is a bot command
+        /// </summary>
+        public bool IsCommand => _commandRegex.IsMatch(Text);
     }
 }

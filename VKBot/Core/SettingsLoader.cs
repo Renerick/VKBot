@@ -30,6 +30,7 @@ namespace VKBot.Core
 
                 parseResult = JsonConvert.DeserializeObject<T>(fileContent);
             }
+
             return parseResult;
         }
     }

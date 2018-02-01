@@ -19,14 +19,14 @@ namespace VKBot.Plugins
 
             if (messageTokens.Length >= 3)
             {
-                var parseSuccess = int.TryParse(messageTokens[2], out limit);
-                if (!parseSuccess)
+                if (!int.TryParse(messageTokens[2], out limit))
                     return settings.Api.Messages.Send(peerId: message.Peer, message: "Не могу определить диапазон");
             }
             else
             {
                 limit = 100;
             }
+
             return settings.Api.Messages.Send(peerId: message.Peer, message: _random.Next(limit).ToString());
         }
     }

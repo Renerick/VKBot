@@ -7,12 +7,12 @@ using VKBot.Types;
 
 namespace VKBot.Core
 {
-    internal class PluginsManager
+    internal class PluginsService
     {
         /// <summary>
         ///     Initialize plugins provider
         /// </summary>
-        public PluginsManager()
+        public PluginsService()
         {
             var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
 
@@ -39,11 +39,18 @@ namespace VKBot.Core
         {
             var messageTokens = message.Text.Split();
 
-            if (messageTokens.Length < 2) return;
-            var command = messageTokens[1].ToLowerInvariant();
+            var command = messageTokens[0].ToLowerInvariant();
 
-            if (PluginsDict.TryGetValue(command, out var plugin))
+            if (!PluginsDict.TryGetValue(command, out var plugin)) return;
+            try
+            {
                 plugin.Handle(settings, message);
+            }
+            catch (Exception e)
+            {
+                // TODO: refactor it
+                Console.WriteLine(e);
+            }
         }
     }
 }
