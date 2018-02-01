@@ -37,9 +37,10 @@ namespace VKBot.Core
         /// <param name="message">New message to handle</param>
         public void Handle(Settings settings, VkMessage message)
         {
-            var messageTokens = message.Text.Split();
+            var messageTokens = message.Command.Split();
 
             var command = messageTokens[0].ToLowerInvariant();
+            Console.WriteLine(command);
 
             if (!PluginsDict.TryGetValue(command, out var plugin)) return;
             try
