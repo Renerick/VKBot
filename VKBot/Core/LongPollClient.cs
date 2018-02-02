@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
-using VkLibrary.Core.Services;
 using VKBot.Types;
 
 namespace VKBot.Core
@@ -21,14 +20,12 @@ namespace VKBot.Core
         private readonly int _wait = 25;
         private bool _isActive;
         private string _key;
-        private readonly ILogger _logger;
         private string _serverUrl;
         private uint _ts;
 
-        public VkLongPollClient(string apiAccessToken, ILogger logger)
+        public VkLongPollClient(string apiAccessToken)
         {
             _apiAccessToken = apiAccessToken;
-            _logger = logger;
             _httpClient = new HttpClient();
         }
 
@@ -46,7 +43,7 @@ namespace VKBot.Core
                 }
                 catch (Exception e)
                 {
-                    _logger.Log($"Received an exception during a long poll request, trying again...\n{e}");
+                    LoggerService.Log($"Received an exception during a long poll request, trying again...\n{e}");
                     Task.Delay(2000).Wait();
                 }
         }
@@ -60,12 +57,12 @@ namespace VKBot.Core
         {
             if (changes["failed"] != null)
             {
-                _logger.Log("Error received, handling...");
+                LoggerService.Log("Error received, handling...");
                 switch ((int) changes["failed"])
                 {
                     case 1:
                         _ts = (uint) changes["new_ts"];
-                        _logger.Log("Ts updated");
+                        LoggerService.Log("Ts updated");
                         break;
                     case 2:
                     case 3:
@@ -95,7 +92,7 @@ namespace VKBot.Core
 
                         var flags = (MessageFlags) (int) update[2];
                         var message = new VkMessage(id, text, peer, attachments, flags);
-                        _logger.Log("Invoke OnMessage event");
+                        LoggerService.Log("Invoke OnMessage event");
                         _onMessage(new MessageEventArgs(message));
                         break;
                     }
@@ -112,11 +109,11 @@ namespace VKBot.Core
             };
             try
             {
-                _logger.Log($"Getting server, executing GET request {urlBuilder}");
+                LoggerService.Log($"Getting server, executing GET request {urlBuilder}");
 
                 var responce = _httpClient.GetStringAsync(urlBuilder.Uri).Result;
 
-                _logger.Log("Responce received, deserializing...");
+                LoggerService.Log("Responce received, deserializing...");
 
                 var serverParams = JObject.Parse(responce)["response"];
 
@@ -124,11 +121,11 @@ namespace VKBot.Core
                 _serverUrl = (string) serverParams["server"];
                 _key = (string) serverParams["key"];
 
-                _logger.Log("Deserialization complete, new long poll configuration obtained");
+                LoggerService.Log("Deserialization complete, new long poll configuration obtained");
             }
             catch (Exception e)
             {
-                _logger.Log(e.ToString());
+                LoggerService.Log(e.ToString());
             }
         }
 
@@ -141,14 +138,14 @@ namespace VKBot.Core
         private async Task<JObject> _sendRequest()
         {
 #if DEBUG
-            _logger.Log("Executing long poll request...");
+            LoggerService.Log("Executing long poll request...");
 #endif
 
             var updates = await _httpClient.GetStringAsync(
                 $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version={_version}&wait={_wait}");
 
 #if DEBUG
-            _logger.Log($"Updates received {updates.Trim()}");
+            LoggerService.Log($"Updates received {updates.Trim()}");
 #endif
 
             var updatesDeserialized = JObject.Parse(updates);

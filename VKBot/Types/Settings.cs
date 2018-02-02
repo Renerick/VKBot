@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using VkLibrary.Core;
-using VkLibrary.Core.Services;
 
 namespace VKBot.Types
 {
@@ -30,13 +29,8 @@ namespace VKBot.Types
         public sbyte DefaultLevel { get; set; }
 
         /// <summary>
-        ///     Array which contains the set of bot command prefixes
+        ///     Array containing a set of the bot command prefixes
         /// </summary>
         public string[] Prefixes { get; set; }
-
-        /// <summary>
-        ///     Logger for Bot
-        /// </summary>
-        public ILogger Logger { get; set; }
     }
 }

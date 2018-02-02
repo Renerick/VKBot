@@ -6,12 +6,10 @@ using VkLibrary.Core.LongPolling;
 namespace VKBot.Types
 {
     /// <summary>
-    ///     This class contains data from long poll server
+    ///     This class contains message data received from a long poll server
     /// </summary>
     public class VkMessage
     {
-        /// <summary>
-        /// </summary>
         private static Regex _commandRegex;
 
         public VkMessage(int messageId, string text, int peer, JObject attachments, MessageFlags flags)
@@ -25,7 +23,6 @@ namespace VKBot.Types
 
         public static Regex CommandRegex
         {
-            get => _commandRegex;
             set
             {
                 if (_commandRegex == null)
@@ -36,7 +33,7 @@ namespace VKBot.Types
         }
 
         /// <summary>
-        ///     Id of message
+        ///     Id of the message
         /// </summary>
         public int MessageId { get; }
 
@@ -61,10 +58,10 @@ namespace VKBot.Types
         public MessageFlags Flags { get; }
 
         public string Prefix => _commandRegex.Match(Text).Groups[1].Value;
-        public string Command => _commandRegex.Match(Text).Groups[2].Value;
+        public string Body => _commandRegex.Match(Text).Groups[2].Value;
 
         /// <summary>
-        ///     Check if message is a bot command
+        ///     Check if the message is a bot command
         /// </summary>
         public bool IsCommand => _commandRegex.IsMatch(Text);
     }

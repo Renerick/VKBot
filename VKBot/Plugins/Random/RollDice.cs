@@ -13,13 +13,13 @@ namespace VKBot.Plugins
 
         public Task Handle(Settings settings, VkMessage message)
         {
-            var messageTokens = message.Text.Split();
+            var messageTokens = message.Body.Split();
 
             int limit;
 
-            if (messageTokens.Length >= 3)
+            if (messageTokens.Length >= 2)
             {
-                if (!int.TryParse(messageTokens[2], out limit))
+                if (!int.TryParse(messageTokens[1], out limit))
                     return settings.Api.Messages.Send(peerId: message.Peer, message: "Не могу определить диапазон");
             }
             else

@@ -30,7 +30,7 @@ namespace VKBot.Core
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
             Settings = settings;
-            Settings.Logger = logger;
+            LoggerService.Logger = logger;
 
             Settings.UserId = loginData.UserId;
             Settings.Api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
@@ -46,7 +46,7 @@ namespace VKBot.Core
                 throw new NotImplementedException("There is no auth through login and password now");
             }
 
-            _longPollClient = new VkLongPollClient(Settings.Api.AccessToken.Token, Settings.Logger);
+            _longPollClient = new VkLongPollClient(Settings.Api.AccessToken.Token);
 
             VkMessage.CommandRegex = _buildPrefixRegex();
             _plugins = new PluginsService();
@@ -66,11 +66,11 @@ namespace VKBot.Core
 
         private void StartLongPoll()
         {
-            _longPollClient.OnMessage += HandleMessage;
+            _longPollClient.OnMessage += _handleMessage;
             _longPollClient.Start();
         }
 
-        private void HandleMessage(object o, MessageEventArgs e)
+        private void _handleMessage(object o, MessageEventArgs e)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace VKBot.Core
             }
             catch (Exception exception)
             {
-                Settings.Logger.Log($"Exception in message handler\n{exception}");
+                LoggerService.Logger.Log($"Exception in message handler\n{exception}");
             }
         }
 
@@ -88,7 +88,7 @@ namespace VKBot.Core
 
             var escapedSettings = Settings.Prefixes.Select(Regex.Escape);
             sb.Append(string.Join("|", escapedSettings)).Append(") *(.+)");
-            Settings.Logger.Log($"Command regex has been built: '{sb}'");
+            LoggerService.Logger.Log($"Command regex has been built: '{sb}'");
 
             return new Regex(sb.ToString());
         }

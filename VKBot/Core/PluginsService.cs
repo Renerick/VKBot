@@ -37,10 +37,10 @@ namespace VKBot.Core
         /// <param name="message">New message to handle</param>
         public void Handle(Settings settings, VkMessage message)
         {
-            var messageTokens = message.Command.Split();
+            var body = message.Body;
+            var spaceIndex = body.IndexOf(" ", StringComparison.Ordinal);
 
-            var command = messageTokens[0].ToLowerInvariant();
-            Console.WriteLine(command);
+            var command = body.Substring(0, spaceIndex > 0 ? spaceIndex : body.Length);
 
             if (!PluginsDict.TryGetValue(command, out var plugin)) return;
             try
@@ -49,8 +49,7 @@ namespace VKBot.Core
             }
             catch (Exception e)
             {
-                // TODO: refactor it
-                Console.WriteLine(e);
+                LoggerService.Logger.Log(e);
             }
         }
     }
