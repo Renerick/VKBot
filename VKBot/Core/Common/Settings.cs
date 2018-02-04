@@ -1,6 +1,6 @@
 ﻿using VkLibrary.Core;
 
-namespace VKBot.Types
+namespace VKBot.Core.Common
 {
     /// <summary>
     ///     This class contains settings of the bot

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using VKBot.Types;
+using VKBot.Core.Common;
 
 namespace VKBot.Plugins
 {

@@ -1,4 +1,4 @@
-﻿namespace VKBot.Types
+﻿namespace VKBot.Core.Common
 {
     public class LoginData
     {

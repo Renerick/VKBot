@@ -3,8 +3,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
-using VKBot.Core.Services;
-using VKBot.Types;
+using VKBot.Core.Common;
+using VKBot.Core.Common.Services;
 
 namespace VKBot.Core
 {
