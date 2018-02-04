@@ -9,12 +9,18 @@ namespace VKBot.Core.Common.Services
     internal class PluginsService
     {
         /// <summary>
-        ///     Initialize plugins provider
+        ///     Initialize plugins service
         /// </summary>
         public PluginsService()
         {
-            var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
+            PluginsDict = new Dictionary<string, IPlugin>();
 
+            _initPlugins();
+        }
+
+        private void _initPlugins()
+        {
+            var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
             var classes = AppDomain.CurrentDomain.GetAssemblies()
                                    .SelectMany(x => x.GetTypes())
                                    .Where(x => Attribute.IsDefined(x, typeof(VkBotPluginAttribute)));
@@ -27,14 +33,13 @@ namespace VKBot.Core.Common.Services
                 PluginsDict[command.ToLowerInvariant()] = plugin;
         }
 
-        private Dictionary<string, IPlugin> PluginsDict { get; } = new Dictionary<string, IPlugin>();
+        private Dictionary<string, IPlugin> PluginsDict { get; }
 
         /// <summary>
         ///     Handle new message
         /// </summary>
-        /// <param name="settings">Bot settings</param>
         /// <param name="message">New message to handle</param>
-        public void Handle(Settings settings, VkMessage message)
+        public void HandleMessage(VkMessage message)
         {
             var body = message.Body;
             var spaceIndex = body.IndexOf(" ", StringComparison.Ordinal);

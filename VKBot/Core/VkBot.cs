@@ -98,7 +98,7 @@ namespace VKBot.Core
         private void _handle(VkMessage message)
         {
             if (message.Flags.HasFlag(MessageFlags.Outbox) || message.Peer == Settings.UserId) return;
-            if (message.IsCommand) _plugins.Handle(Settings, message);
+            if (message.IsCommand) _plugins.HandleMessage(message);
         }
     }
 }
