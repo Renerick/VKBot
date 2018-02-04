@@ -17,8 +17,7 @@ namespace VKBot.Plugins
         /// <summary>
         ///     Handle new message
         /// </summary>
-        /// <param name="settings">Bot settings</param>
         /// <param name="message">Message object</param>
-        Task Handle(Settings settings, VkMessage message);
+        Task Handle(VkMessage message);
     }
 }

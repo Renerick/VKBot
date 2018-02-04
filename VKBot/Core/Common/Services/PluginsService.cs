@@ -44,7 +44,7 @@ namespace VKBot.Core.Common.Services
             if (!PluginsDict.TryGetValue(command, out var plugin)) return;
             try
             {
-                plugin.Handle(settings, message);
+                plugin.Handle(message);
             }
             catch (Exception e)
             {
