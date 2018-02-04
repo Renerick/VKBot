@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using VKBot.Plugins;
 using VKBot.Types;
 
-namespace VKBot.Core
+namespace VKBot.Core.Services
 {
     internal class PluginsService
     {

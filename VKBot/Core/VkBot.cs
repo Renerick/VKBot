@@ -7,6 +7,7 @@ using VkLibrary.Core;
 using VkLibrary.Core.Auth;
 using VkLibrary.Core.LongPolling;
 using VkLibrary.Core.Services;
+using VKBot.Core.Services;
 using VKBot.Types;
 
 namespace VKBot.Core

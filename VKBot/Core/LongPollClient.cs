@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
+using VKBot.Core.Services;
 using VKBot.Types;
 
 namespace VKBot.Core
@@ -58,7 +59,8 @@ namespace VKBot.Core
             if (changes["failed"] != null)
             {
                 LoggerService.Log("Error received, handling...");
-                switch ((int) changes["failed"])
+                var code = (int) changes["failed"];
+                switch (code)
                 {
                     case 1:
                         _ts = (uint) changes["new_ts"];
@@ -67,6 +69,9 @@ namespace VKBot.Core
                     case 2:
                     case 3:
                         _getLongPollServer();
+                        break;
+                    default:
+                        LoggerService.Log($"Unknown error code has been detected in a long poll response: {code}");
                         break;
                 }
 

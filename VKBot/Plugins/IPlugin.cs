@@ -15,7 +15,7 @@ namespace VKBot.Plugins
         IEnumerable<string> Commands { get; }
 
         /// <summary>
-        ///     Method which handle new message
+        ///     Handle new message
         /// </summary>
         /// <param name="settings">Bot settings</param>
         /// <param name="message">Message object</param>
