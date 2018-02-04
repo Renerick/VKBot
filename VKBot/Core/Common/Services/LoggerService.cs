@@ -1,6 +1,6 @@
 ﻿using VkLibrary.Core.Services;
 
-namespace VKBot.Core
+namespace VKBot.Core.Common.Services
 {
     public static class LoggerService
     {

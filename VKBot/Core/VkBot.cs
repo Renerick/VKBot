@@ -7,7 +7,8 @@ using VkLibrary.Core;
 using VkLibrary.Core.Auth;
 using VkLibrary.Core.LongPolling;
 using VkLibrary.Core.Services;
-using VKBot.Types;
+using VKBot.Core.Common;
+using VKBot.Core.Common.Services;
 
 namespace VKBot.Core
 {
@@ -49,6 +50,7 @@ namespace VKBot.Core
             _longPollClient = new VkLongPollClient(Settings.Api.AccessToken.Token);
 
             VkMessage.CommandRegex = _buildPrefixRegex();
+            MessageService.SetApi(Settings.Api);
             _plugins = new PluginsService();
         }
 
@@ -96,7 +98,7 @@ namespace VKBot.Core
         private void _handle(VkMessage message)
         {
             if (message.Flags.HasFlag(MessageFlags.Outbox) || message.Peer == Settings.UserId) return;
-            if (message.IsCommand) _plugins.Handle(Settings, message);
+            if (message.IsCommand) _plugins.HandleMessage(message);
         }
     }
 }

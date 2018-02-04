@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using VKBot.Types;
+using VKBot.Core.Common;
 
 namespace VKBot.Plugins
 {
@@ -15,10 +15,9 @@ namespace VKBot.Plugins
         IEnumerable<string> Commands { get; }
 
         /// <summary>
-        ///     Method which handle new message
+        ///     Handle new message
         /// </summary>
-        /// <param name="settings">Bot settings</param>
         /// <param name="message">Message object</param>
-        Task Handle(Settings settings, VkMessage message);
+        Task Handle(VkMessage message);
     }
 }

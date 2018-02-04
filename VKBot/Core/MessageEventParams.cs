@@ -1,5 +1,5 @@
 ﻿using System;
-using VKBot.Types;
+using VKBot.Core.Common;
 
 namespace VKBot.Core
 {

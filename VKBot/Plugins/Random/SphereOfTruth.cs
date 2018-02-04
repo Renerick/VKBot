@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using VKBot.Types;
+using VKBot.Core.Common;
+using VKBot.Core.Common.Services;
 
 namespace VKBot.Plugins
 {
@@ -38,11 +39,11 @@ namespace VKBot.Plugins
 
         public IEnumerable<string> Commands { get; } = new[] {"шар"};
 
-        public async Task Handle(Settings settings, VkMessage message)
+        public async Task Handle(VkMessage message)
         {
             var peer = message.Peer;
             var responce = _options[_generator.Next(_options.Length)];
-            await settings.Api.Messages.Send(peerId: peer, message: responce);
+            await MessageService.Perform.Send(peerId: peer, message: responce);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
 
-namespace VKBot.Types
+namespace VKBot.Core.Common
 {
     /// <summary>
     ///     This class contains message data received from a long poll server

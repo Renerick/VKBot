@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
-using VKBot.Types;
+using VKBot.Core.Common;
 
 namespace VKBot.Core
 {

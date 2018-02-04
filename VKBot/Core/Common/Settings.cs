@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using VkLibrary.Core;
+﻿using VkLibrary.Core;
 
-namespace VKBot.Types
+namespace VKBot.Core.Common
 {
     /// <summary>
     ///     This class contains settings of the bot
@@ -17,16 +16,6 @@ namespace VKBot.Types
         ///     Bot account ID
         /// </summary>
         public int UserId { get; set; }
-
-        /// <summary>
-        ///     Users rights storage
-        /// </summary>
-        public Dictionary<ulong, sbyte> UsersLevels { get; set; }
-
-        /// <summary>
-        ///     Default user rights level
-        /// </summary>
-        public sbyte DefaultLevel { get; set; }
 
         /// <summary>
         ///     Array containing a set of the bot command prefixes

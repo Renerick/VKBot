@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using VKBot.Types;
+using VKBot.Core.Common;
+using VKBot.Core.Common.Services;
 
 namespace VKBot.Plugins
 {
@@ -9,9 +10,9 @@ namespace VKBot.Plugins
     {
         public IEnumerable<string> Commands { get; } = new[] {"тест"};
 
-        public async Task Handle(Settings settings, VkMessage message)
+        public async Task Handle(VkMessage message)
         {
-            await settings.Api.Messages.Send(peerId: message.Peer, message: message.Text + "!");
+            await MessageService.Perform.Send(peerId: message.Peer, message: message.Text + "!");
         }
     }
 }
