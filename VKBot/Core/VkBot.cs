@@ -8,7 +8,7 @@ using VkLibrary.Core.Auth;
 using VkLibrary.Core.LongPolling;
 using VkLibrary.Core.Services;
 using VKBot.Core.Common;
-using VKBot.Core.Common.Services;
+using VKBot.Core.Services;
 
 namespace VKBot.Core
 {
@@ -17,6 +17,8 @@ namespace VKBot.Core
         private readonly VkLongPollClient _longPollClient;
 
         private readonly PluginsService _plugins;
+
+        private readonly ServiceContext _services;
 
         /// <summary>
         ///     Primary constructor, initialize bot settings
@@ -31,27 +33,27 @@ namespace VKBot.Core
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
             Settings = settings;
-            LoggerService.Logger = logger;
 
             Settings.UserId = loginData.UserId;
-            Settings.Api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
+            var api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
 
             // login
             if (loginData.AccessToken != null)
             {
                 var accessToken = AccessToken.FromString(loginData.AccessToken, loginData.UserId);
-                Settings.Api.AccessToken = accessToken;
+                _services.ApiService.AccessToken = accessToken;
             }
             else
             {
                 throw new NotImplementedException("There is no auth through login and password now");
             }
 
-            _longPollClient = new VkLongPollClient(Settings.Api.AccessToken.Token);
+            _longPollClient = new VkLongPollClient(_services.ApiService.AccessToken.Token, _services);
+            
+            _services = new ServiceContext(logger, api);
 
             VkMessage.CommandRegex = _buildPrefixRegex();
-            MessageService.SetApi(Settings.Api);
-            _plugins = new PluginsService();
+            _plugins = new PluginsService(_services);
         }
 
         private Settings Settings { get; }
@@ -80,7 +82,7 @@ namespace VKBot.Core
             }
             catch (Exception exception)
             {
-                LoggerService.Logger.Log($"Exception in message handler\n{exception}");
+                _services.Logger.Log($"Exception in message handler\n{exception}");
             }
         }
 
@@ -90,7 +92,7 @@ namespace VKBot.Core
 
             var escapedSettings = Settings.Prefixes.Select(Regex.Escape);
             sb.Append(string.Join("|", escapedSettings)).Append(") *(.+)");
-            LoggerService.Logger.Log($"Command regex has been built: '{sb}'");
+            _services.Logger.Log($"Command regex has been built: '{sb}'");
 
             return new Regex(sb.ToString());
         }

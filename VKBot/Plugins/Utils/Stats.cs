@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VKBot.Core.Common;
-using VKBot.Core.Common.Services;
+using VKBot.Core.Services;
 
 namespace VKBot.Plugins
 {
@@ -18,11 +18,11 @@ namespace VKBot.Plugins
 
         public IEnumerable<string> Commands { get; } = new[] {"stats", "статы"};
 
-        public Task Handle(VkMessage message)
+        public Task Handle(VkMessage message, ServiceContext services)
         {
             var peer = message.Peer;
             var result = $"Бот работает уже {DateTime.Now - _start:c}";
-            return MessageService.Perform.Send(peerId: peer, message: result);
+            return services.ApiService.Messages.Send(peerId: peer, message: result);
         }
     }
 }

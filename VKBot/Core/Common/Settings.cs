@@ -1,17 +1,10 @@
-﻿using VkLibrary.Core;
-
-namespace VKBot.Core.Common
+﻿namespace VKBot.Core.Common
 {
     /// <summary>
     ///     This class contains settings of the bot
     /// </summary>
     public class Settings
     {
-        /// <summary>
-        ///     Vk API reference
-        /// </summary>
-        public Vkontakte Api { get; internal set; }
-
         /// <summary>
         ///     Bot account ID
         /// </summary>

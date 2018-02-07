@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using VKBot.Core.Common;
+using VKBot.Core.Services;
 using VKBot.Plugins;
 
-namespace VKBot.Core.Common.Services
+namespace VKBot.Core
 {
     internal class PluginsService
     {
+        private readonly ServiceContext _services;
+        
         /// <summary>
         ///     Initialize plugins service
         /// </summary>
-        public PluginsService()
+        public PluginsService(ServiceContext services)
         {
             PluginsDict = new Dictionary<string, IPlugin>();
-
+            _services = services;
             _initPlugins();
         }
 
@@ -49,11 +53,11 @@ namespace VKBot.Core.Common.Services
             if (!PluginsDict.TryGetValue(command, out var plugin)) return;
             try
             {
-                plugin.Handle(message);
+                plugin.Handle(message, _services);
             }
             catch (Exception e)
             {
-                LoggerService.Logger.Log(e);
+                _services.Logger.Log(e);
             }
         }
     }
