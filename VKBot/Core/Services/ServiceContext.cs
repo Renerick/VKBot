@@ -7,11 +7,13 @@ namespace VKBot.Core.Services
     {
         public LoggerService Logger { get; }
         public Vkontakte ApiService { get; }
-
-        public ServiceContext(ILogger logger, Vkontakte api)
+        public VkMessageFactory MessageFactory { get; }
+        
+        public ServiceContext(ILogger logger, Vkontakte api, VkMessageFactory messageFactory)
         {
             Logger = new LoggerService(logger);
             ApiService = api;
+            MessageFactory = messageFactory;
         }
     }
 }

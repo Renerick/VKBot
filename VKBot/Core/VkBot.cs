@@ -50,9 +50,8 @@ namespace VKBot.Core
 
             _longPollClient = new VkLongPollClient(_services.ApiService.AccessToken.Token, _services);
             
-            _services = new ServiceContext(logger, api);
+            _services = new ServiceContext(logger, api, new VkMessageFactory(_buildPrefixRegex()));
 
-            VkMessage.CommandRegex = _buildPrefixRegex();
             _plugins = new PluginsService(_services);
         }
 

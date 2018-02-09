@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
-using VKBot.Core.Common;
 using VKBot.Core.Services;
 
 namespace VKBot.Core
@@ -98,7 +97,7 @@ namespace VKBot.Core
                             attachments = (JObject) update[6];
 
                         var flags = (MessageFlags) (int) update[2];
-                        var message = new VkMessage(id, text, peer, attachments, flags);
+                        var message = _services.MessageFactory.Build(id, text, peer, attachments, flags);
                         _services.Logger.Log("Invoke OnMessage event");
                         _onMessage(new MessageEventArgs(message));
                         break;
