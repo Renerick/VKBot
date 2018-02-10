@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using VkLibrary.Core;
+using VkLibrary.Core.Services;
 using VKBot.Core.Common;
-using VKBot.Core.Services;
 
 namespace VKBot.Plugins
 {
@@ -10,9 +11,9 @@ namespace VKBot.Plugins
     {
         public IEnumerable<string> Commands { get; } = new[] {"тест"};
 
-        public async Task Handle(VkMessage message, ServiceContext services)
+        public async Task Handle(VkMessage message, Vkontakte api, ILogger logger)
         {
-            await services.ApiService.Messages.Send(peerId: message.Peer, message: message.Text + "!");
+            await api.Messages.Send(peerId: message.Peer, message: message.Text + "!");
         }
     }
 }

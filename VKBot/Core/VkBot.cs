@@ -18,7 +18,9 @@ namespace VKBot.Core
 
         private readonly PluginsService _plugins;
 
-        private readonly ServiceContext _services;
+        private readonly ILogger _logger;
+        private readonly VkMessageFactory _messageFactory;
+        private readonly Vkontakte _api;
 
         /// <summary>
         ///     Primary constructor, initialize bot settings
@@ -33,26 +35,26 @@ namespace VKBot.Core
         public VkBot(LoginData loginData, Settings settings, ILogger logger = null)
         {
             Settings = settings;
+            _logger = logger;
+            _messageFactory = new VkMessageFactory(_buildPrefixRegex());
 
             Settings.UserId = loginData.UserId;
-            var api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
+            _api = new Vkontakte(loginData.AppId, loginData.AppSecret, logger, parseJson: ParseJson.FromStream);
 
             // login
             if (loginData.AccessToken != null)
             {
                 var accessToken = AccessToken.FromString(loginData.AccessToken, loginData.UserId);
-                _services.ApiService.AccessToken = accessToken;
+                _api.AccessToken = accessToken;
             }
             else
             {
                 throw new NotImplementedException("There is no auth through login and password now");
             }
 
-            _longPollClient = new VkLongPollClient(_services.ApiService.AccessToken.Token, _services);
-            
-            _services = new ServiceContext(logger, api, new VkMessageFactory(_buildPrefixRegex()));
+            _longPollClient = new VkLongPollClient(_api.AccessToken.Token, _logger, _messageFactory);
 
-            _plugins = new PluginsService(_services);
+            _plugins = new PluginsService(_api, _logger);
         }
 
         private Settings Settings { get; }
@@ -81,7 +83,7 @@ namespace VKBot.Core
             }
             catch (Exception exception)
             {
-                _services.Logger.Log($"Exception in message handler\n{exception}");
+                _logger.Log($"Exception in message handler\n{exception}");
             }
         }
 
@@ -91,7 +93,7 @@ namespace VKBot.Core
 
             var escapedSettings = Settings.Prefixes.Select(Regex.Escape);
             sb.Append(string.Join("|", escapedSettings)).Append(") *(.+)");
-            _services.Logger.Log($"Command regex has been built: '{sb}'");
+            _logger.Log($"Command regex has been built: '{sb}'");
 
             return new Regex(sb.ToString());
         }

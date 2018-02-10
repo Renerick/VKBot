@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using VkLibrary.Core.LongPolling;
+using VkLibrary.Core.Services;
 using VKBot.Core.Services;
 
 namespace VKBot.Core
@@ -14,7 +15,8 @@ namespace VKBot.Core
     {
         private readonly string _apiAccessToken;
         private readonly Uri _apiUrl = new Uri("https://api.vk.com/");
-        private readonly ServiceContext _services;
+        private readonly ILogger _logger;
+        private readonly VkMessageFactory _messageFactory;
 
         private readonly HttpClient _httpClient;
         private readonly int _version = 2;
@@ -24,11 +26,12 @@ namespace VKBot.Core
         private string _serverUrl;
         private uint _ts;
 
-        public VkLongPollClient(string apiAccessToken, ServiceContext services)
+        public VkLongPollClient(string apiAccessToken, ILogger logger, VkMessageFactory messageFactory)
         {
             _apiAccessToken = apiAccessToken;
             _httpClient = new HttpClient();
-            _services = services;
+            _logger = logger;
+            _messageFactory = messageFactory;
         }
 
         public event EventHandler<MessageEventArgs> OnMessage;
@@ -45,7 +48,7 @@ namespace VKBot.Core
                 }
                 catch (Exception e)
                 {
-                    _services.Logger.Log($"Received an exception during a long poll request, trying again...\n{e}");
+                    _logger.Log($"Received an exception during a long poll request, trying again...\n{e}");
                     Task.Delay(2000).Wait();
                 }
         }
@@ -59,20 +62,20 @@ namespace VKBot.Core
         {
             if (changes["failed"] != null)
             {
-                _services.Logger.Log("Error received, handling...");
+                _logger.Log("Error received, handling...");
                 var code = (int) changes["failed"];
                 switch (code)
                 {
                     case 1:
                         _ts = (uint) changes["new_ts"];
-                        _services.Logger.Log("Ts updated");
+                        _logger.Log("Ts updated");
                         break;
                     case 2:
                     case 3:
                         _getLongPollServer();
                         break;
                     default:
-                        _services.Logger.Log($"Unknown error code has been detected in a long poll response: {code}");
+                        _logger.Log($"Unknown error code has been detected in a long poll response: {code}");
                         break;
                 }
 
@@ -97,8 +100,8 @@ namespace VKBot.Core
                             attachments = (JObject) update[6];
 
                         var flags = (MessageFlags) (int) update[2];
-                        var message = _services.MessageFactory.Build(id, text, peer, attachments, flags);
-                        _services.Logger.Log("Invoke OnMessage event");
+                        var message = _messageFactory.Build(id, text, peer, attachments, flags);
+                        _logger.Log("Invoke OnMessage event");
                         _onMessage(new MessageEventArgs(message));
                         break;
                     }
@@ -115,11 +118,11 @@ namespace VKBot.Core
             };
             try
             {
-                _services.Logger.Log($"Getting server, executing GET request {urlBuilder}");
+                _logger.Log($"Getting server, executing GET request {urlBuilder}");
 
                 var responce = _httpClient.GetStringAsync(urlBuilder.Uri).Result;
 
-                _services.Logger.Log("Responce received, deserializing...");
+                _logger.Log("Responce received, deserializing...");
 
                 var serverParams = JObject.Parse(responce)["response"];
 
@@ -127,11 +130,11 @@ namespace VKBot.Core
                 _serverUrl = (string) serverParams["server"];
                 _key = (string) serverParams["key"];
 
-                _services.Logger.Log("Deserialization complete, new long poll configuration obtained");
+                _logger.Log("Deserialization complete, new long poll configuration obtained");
             }
             catch (Exception e)
             {
-                _services.Logger.Log(e.ToString());
+                _logger.Log(e.ToString());
             }
         }
 
@@ -144,14 +147,14 @@ namespace VKBot.Core
         private async Task<JObject> _sendRequest()
         {
 #if DEBUG
-            _services.Logger.Log("Executing long poll request...");
+            _logger.Log("Executing long poll request...");
 #endif
 
             var updates = await _httpClient.GetStringAsync(
                 $"https://{_serverUrl}?act=a_check&ts={_ts}&key={_key}&version={_version}&wait={_wait}");
 
 #if DEBUG
-            _services.Logger.Log($"Updates received {updates.Trim()}");
+            _logger.Log($"Updates received {updates.Trim()}");
 #endif
 
             var updatesDeserialized = JObject.Parse(updates);

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using VkLibrary.Core;
+using VkLibrary.Core.Services;
 using VKBot.Core.Common;
-using VKBot.Core.Services;
 
 namespace VKBot.Plugins
 {
@@ -19,7 +20,8 @@ namespace VKBot.Plugins
         ///     Handle new message
         /// </summary>
         /// <param name="message">Message object</param>
-        /// <param name="services">Services of the bot (logger, api, etc.)</param>
-        Task Handle(VkMessage message, ServiceContext services);
+        /// <param name="api"></param>
+        /// <param name="logger"></param>
+        Task Handle(VkMessage message, Vkontakte api, ILogger logger);
     }
 }
