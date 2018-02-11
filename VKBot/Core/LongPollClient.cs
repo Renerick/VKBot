@@ -38,6 +38,7 @@ namespace VKBot.Core
 
         public async void Start()
         {
+            var errorsCounter = 3;
             _getLongPollServer();
             _isActive = true;
             while (_isActive)
@@ -50,6 +51,12 @@ namespace VKBot.Core
                 {
                     _logger.Log($"Received an exception during a long poll request, trying again...\n{e}");
                     Task.Delay(2000).Wait();
+                    errorsCounter--;
+                    
+                    if (errorsCounter != 0) continue;
+                    _logger.Log("3 errors in a row, requesting for a new server");
+                    _getLongPollServer();
+                    errorsCounter = 3;
                 }
         }
 
