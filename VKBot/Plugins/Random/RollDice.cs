@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VkLibrary.Core;
+using VkLibrary.Core.Services;
 using VKBot.Core.Common;
-using VKBot.Core.Common.Services;
 
 namespace VKBot.Plugins
 {
@@ -12,7 +13,7 @@ namespace VKBot.Plugins
         private readonly Random _random = new Random();
         public IEnumerable<string> Commands { get; } = new[] {"roll", "кубик", "dice", "random", "рандом"};
 
-        public Task Handle(VkMessage message)
+        public Task Handle(VkMessage message, Vkontakte api, ILogger logger)
         {
             var messageTokens = message.Body.Split();
 
@@ -21,14 +22,14 @@ namespace VKBot.Plugins
             if (messageTokens.Length >= 2)
             {
                 if (!int.TryParse(messageTokens[1], out limit))
-                    return MessageService.Perform.Send(peerId: message.Peer, message: "Не могу определить диапазон");
+                    return api.Messages.Send(peerId: message.Peer, message: "Не могу определить диапазон");
             }
             else
             {
                 limit = 100;
             }
 
-            return MessageService.Perform.Send(peerId: message.Peer, message: _random.Next(limit).ToString());
+            return api.Messages.Send(peerId: message.Peer, message: _random.Next(limit).ToString());
         }
     }
 }

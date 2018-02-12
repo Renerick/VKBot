@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VkLibrary.Core;
+using VkLibrary.Core.Services;
 using VKBot.Core.Common;
-using VKBot.Core.Common.Services;
 
 namespace VKBot.Plugins
 {
@@ -18,11 +19,11 @@ namespace VKBot.Plugins
 
         public IEnumerable<string> Commands { get; } = new[] {"stats", "статы"};
 
-        public Task Handle(VkMessage message)
+        public Task Handle(VkMessage message, Vkontakte api, ILogger logger)
         {
             var peer = message.Peer;
             var result = $"Бот работает уже {DateTime.Now - _start:c}";
-            return MessageService.Perform.Send(peerId: peer, message: result);
+            return api.Messages.Send(peerId: peer, message: result);
         }
     }
 }

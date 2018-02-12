@@ -10,26 +10,16 @@ namespace VKBot.Core.Common
     /// </summary>
     public class VkMessage
     {
-        private static Regex _commandRegex;
+        private readonly Regex _commandRegex;
 
-        public VkMessage(int messageId, string text, int peer, JObject attachments, MessageFlags flags)
+        public VkMessage(int messageId, string text, int peer, JObject attachments, MessageFlags flags, Regex commandRegex)
         {
             MessageId = messageId;
             Text = text ?? throw new ArgumentNullException(nameof(text));
             Peer = peer;
             Attachments = attachments;
             Flags = flags;
-        }
-
-        public static Regex CommandRegex
-        {
-            set
-            {
-                if (_commandRegex == null)
-                    _commandRegex = value;
-                else
-                    throw new Exception("Command regex can't be redefined");
-            }
+            _commandRegex = commandRegex;
         }
 
         /// <summary>
