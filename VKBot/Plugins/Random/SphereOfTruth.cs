@@ -7,7 +7,7 @@ using VKBot.Core.Common;
 
 namespace VKBot.Plugins
 {
-    [VkBotPlugin]
+    [VkBotPlugin("Sphere of truth")]
     public class SphereOfTruth : IPlugin
     {
         private readonly Random _generator = new Random();

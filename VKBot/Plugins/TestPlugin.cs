@@ -6,7 +6,7 @@ using VKBot.Core.Common;
 
 namespace VKBot.Plugins
 {
-    [VkBotPlugin]
+    [VkBotPlugin("Test plugin")]
     internal class TestPlugin : IPlugin
     {
         public IEnumerable<string> Commands { get; } = new[] {"тест"};

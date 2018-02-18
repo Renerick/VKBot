@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using VkLibrary.Core;
 using VkLibrary.Core.Services;
@@ -11,13 +12,13 @@ namespace VKBot.Core
 {
     internal class PluginsService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger   _logger;
         private readonly Vkontakte _api;
-        
+
         /// <summary>
         ///     Initialize plugins service
         /// </summary>
-        public PluginsService(Vkontakte api,  ILogger logger)
+        public PluginsService(Vkontakte api, ILogger logger)
         {
             PluginsDict = new Dictionary<string, IPlugin>();
             _logger = logger;
@@ -27,13 +28,22 @@ namespace VKBot.Core
 
         private void _initPlugins()
         {
+            _logger.Log("Loading plugins...");
+
+            var pluginAttributeType = typeof(VkBotPluginAttribute);
             var plugins = new ReadOnlyCollectionBuilder<IPlugin>();
             var classes = AppDomain.CurrentDomain.GetAssemblies()
                                    .SelectMany(x => x.GetTypes())
-                                   .Where(x => Attribute.IsDefined(x, typeof(VkBotPluginAttribute)));
+                                   .Where(x => Attribute.IsDefined(x, pluginAttributeType) &&
+                                               x.FindInterfaces((type, criteria) => type == (Type) criteria,
+                                                   typeof(IPlugin)).Length != 0);
 
             foreach (var plugin in classes)
-                plugins.Add((IPlugin) Activator.CreateInstance(plugin));
+            {
+                var newPlugin = (IPlugin) Activator.CreateInstance(plugin);
+                plugins.Add(newPlugin);
+                _logger.Log($"Plugin \"{((VkBotPluginAttribute) plugin.GetCustomAttribute(pluginAttributeType)).Name}\" loaded");
+            }
 
             foreach (var plugin in plugins)
             foreach (var command in plugin.Commands)

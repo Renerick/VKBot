@@ -7,7 +7,7 @@ using VKBot.Core.Common;
 
 namespace VKBot.Plugins
 {
-    [VkBotPlugin]
+    [VkBotPlugin("Bot statistic")]
     public class Stats : IPlugin
     {
         private readonly DateTime _start;

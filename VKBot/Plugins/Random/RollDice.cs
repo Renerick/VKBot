@@ -7,7 +7,7 @@ using VKBot.Core.Common;
 
 namespace VKBot.Plugins
 {
-    [VkBotPlugin]
+    [VkBotPlugin("Dice")]
     public class RollDice : IPlugin
     {
         private readonly Random _random = new Random();
